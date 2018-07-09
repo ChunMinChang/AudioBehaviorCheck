@@ -10,8 +10,8 @@ int main()
 {
   AudioDeviceListener adl(&OnDeviceChanged);
   std::cout << "Try changing your default audio devies"
-                "or un/plugging your audio devices."
-                "Enter anythin to exit." << std::endl;
+                " or un/plugging your audio devices."
+                " Press Enter to exit." << std::endl;
   std::cin.ignore();
   return 0;
 }
