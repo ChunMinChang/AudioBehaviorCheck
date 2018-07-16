@@ -17,5 +17,22 @@ You can use ```$ make clean```
 - Try using ```kAudioUnitSubType_VoiceProcessingIO``` in AudioUnit
   and see what the differences are from the above.
 - Able to let DeviceChangeCallback to notify users what exact change is
+- Need to find a way to fire device-changed events without manually unplugging/plugging devices.
+(Is it possible?)
+
+## Tests
+
+### ```test_audio.cpp```
+Play a sine wave
+
+### ```test_deadlock.cpp```
+Prove there is a **mutex** inside ```AudioUnit```. It will lead to a deadlock if we don't use it carefully.
+
+#### Deadlock
+
+![](images/deadlock.gif)
+
+### ```test_listener.cpp```
+Test for listening device-changed events.
 
 [gist]: https://gist.github.com/ChunMinChang/47b8712ed57b96721eec18dede39d2f9 "Note for coreaudio"
