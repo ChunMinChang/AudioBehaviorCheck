@@ -26,7 +26,7 @@ You can use ```$ make clean```
 Play a sine wave
 
 ### ```test_deadlock.cpp```
-Prove there is a **mutex** inside ```AudioUnit```. It will lead to a deadlock if we don't use it carefully.
+Prove there is a *mutex* **inside** ```AudioUnit```. It will lead to a deadlock if we don't use it carefully (that's why I wrote the original gist post.).
 
 #### Deadlock
 
