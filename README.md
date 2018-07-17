@@ -19,6 +19,7 @@ You can use ```$ make clean```
 - Able to let DeviceChangeCallback to notify users what exact change is
 - Need to find a way to fire device-changed events without manually unplugging/plugging devices.
 (Is it possible?)
+- Test some APIs that might use mutex inside AudioUnit and see if they will lead to a deadlock.
 
 ## Tests
 
@@ -27,6 +28,11 @@ Play a sine wave
 
 ### ```test_deadlock.cpp```
 Prove there is a *mutex* **inside** ```AudioUnit```. It will lead to a deadlock if we don't use it carefully (that's why I wrote the original [gist post][gist].).
+
+Some APIs use the same ```AudioUnit``` mutex
+(that ```AudioComponentFindNext``` or ```AudioComponentInstanceNew``` use)
+will also lead to a deadlock.
+We should put them to test here.
 
 #### Deadlock
 
