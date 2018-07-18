@@ -7,7 +7,7 @@ const AudioObjectPropertyAddress kDevicesPropertyAddress = {
   kAudioObjectPropertyElementMaster
 };
 
-const AudioObjectPropertyAddress kDeviceNameProperty = {
+const AudioObjectPropertyAddress kDeviceNamePropertyAddress = {
   kAudioObjectPropertyName,
   kAudioObjectPropertyScopeGlobal,
   kAudioObjectPropertyElementMaster
@@ -59,7 +59,7 @@ GetDeviceName(AudioObjectID aID)
 {
   CFStringRef data = nullptr;
   UInt32 size = sizeof(data);
-  OSStatus r = AudioObjectGetPropertyData(aID, &kDeviceNameProperty,
+  OSStatus r = AudioObjectGetPropertyData(aID, &kDeviceNamePropertyAddress,
                                           0, NULL, &size, &data);
   if (r != noErr || !data) {
     return ""; // TODO: Not a good style. Fix later.
