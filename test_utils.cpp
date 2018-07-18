@@ -7,7 +7,7 @@ using std::endl;
 void printDevicesID(vector<AudioObjectID> ids)
 {
  for (AudioObjectID id: ids) {
-   cout << id << endl;
+   cout << id << " : " << AudioDeviceUtils::GetDeviceName(id) << endl;
    if (AudioDeviceUtils::IsInput(id)) {
      cout << "\tinput" << endl;
    }
@@ -18,21 +18,10 @@ void printDevicesID(vector<AudioObjectID> ids)
  cout << endl;
 }
 
-void printDevicesName(vector<string> names)
-{
- for (string name: names) {
-   cout << name << endl;
- }
- cout << endl;
-}
-
 int main()
 {
   vector<AudioObjectID> ids = AudioDeviceUtils::GetAllDeviceIDs();
   printDevicesID(ids);
-
-  vector<string> names = AudioDeviceUtils::GetAllDeviceNames();
-  printDevicesName(names);
 
   AudioObjectID defaultInput = AudioDeviceUtils::GetDefaultDeviceID(true);
   cout << "default input: " << defaultInput << endl;

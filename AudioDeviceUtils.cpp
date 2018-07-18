@@ -80,7 +80,7 @@ CFStringRefToUTF8(CFStringRef aString)
 }
 
 /* static */ string
-GetDeviceName(AudioObjectID aID)
+AudioDeviceUtils::GetDeviceName(AudioObjectID aID)
 {
   CFStringRef data = nullptr;
   UInt32 size = sizeof(data);
@@ -97,17 +97,6 @@ GetDeviceName(AudioObjectID aID)
   }
 
   return std::string(name);
-}
-
-/* static */ vector<string>
-AudioDeviceUtils::GetAllDeviceNames()
-{
-  vector<string> names;
-  vector<AudioObjectID> ids = GetAllDeviceIDs();
-  for (AudioObjectID id : ids) {
-    names.push_back(GetDeviceName(id));
-  }
-  return names;
 }
 
 /* static */ AudioObjectID
