@@ -1,14 +1,16 @@
 CXX=g++
 CFLAGS=-Wall -std=c++14
-LIBRARIES=-framework CoreAudio -framework AudioUnit
+LIBRARIES=-framework CoreAudio -framework AudioUnit -framework CoreFoundation
 
 SOURCES=AudioStream.cpp\
-        AudioDeviceListener.cpp
+        AudioDeviceListener.cpp\
+        AudioDeviceUtils.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
 TESTS=test_audio.cpp\
       test_deadlock.cpp\
-      test_listener.cpp
+      test_listener.cpp\
+      test_utils.cpp
 EXECUTABLES=$(TESTS:.cpp=)
 
 all: $(OBJECTS) build
