@@ -12,11 +12,11 @@ using std::string;
 class AudioDeviceUtils
 {
 public:
-  static vector<AudioObjectID> GetAllDeviceIDs();
-  static string GetDeviceName(AudioObjectID aID);
   static AudioObjectID GetDefaultDeviceID(bool aInput);
+  static vector<AudioObjectID> GetAllDeviceIDs();
   static bool IsInput(AudioObjectID aId);
   static bool IsOutput(AudioObjectID aId);
+  static string GetDeviceName(AudioObjectID aID);
 };
 
 #endif // #ifndef AUDIODEVICEUTILS_H
