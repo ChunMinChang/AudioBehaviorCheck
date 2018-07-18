@@ -18,24 +18,33 @@ void printDevicesID(vector<AudioObjectID> ids)
  cout << endl;
 }
 
+string getDefaultDeviceName(bool isInput)
+{
+  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(isInput);
+  return AudioDeviceUtils::GetDeviceName(id);
+}
+
+void changeDefaultDevice(bool isInput) {
+  cout << "Change default " << (isInput ? "input" : "output")
+       << " device from : " << getDefaultDeviceName(isInput) << " to : "
+       << (AudioDeviceUtils::ChangeDefaultDevice(isInput)
+             ? getDefaultDeviceName(isInput)
+             : " Fail to change!") << endl;
+}
+
 int main()
 {
   vector<AudioObjectID> ids = AudioDeviceUtils::GetAllDeviceIds();
   printDevicesID(ids);
-
-  AudioObjectID defaultInput = AudioDeviceUtils::GetDefaultDeviceId(true);
-  cout << "default input: " << defaultInput << endl;
-
-  AudioObjectID defaultOutput = AudioDeviceUtils::GetDefaultDeviceId(false);
-  cout << "default output: " << defaultOutput << endl;
-
-  cout << endl;
 
   vector<AudioObjectID> ins = AudioDeviceUtils::GetDeviceIds(true);
   printDevicesID(ins);
 
   vector<AudioObjectID> outs = AudioDeviceUtils::GetDeviceIds(false);
   printDevicesID(outs);
+
+  changeDefaultDevice(true);
+  changeDefaultDevice(false);
 
   return 0;
 }

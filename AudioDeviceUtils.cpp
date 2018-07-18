@@ -144,3 +144,33 @@ AudioDeviceUtils::GetDeviceIds(bool aInput) {
 
   return ids;
 }
+
+bool
+SetDefaultDevice(AudioObjectID aId, bool aInput)
+{
+  const AudioObjectPropertyAddress* address = aInput ?
+    &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
+  return AudioObjectSetPropertyData(kAudioObjectSystemObject, address,
+                                    0, NULL, sizeof(aId), &aId) == noErr;
+}
+
+/* static */ bool
+AudioDeviceUtils::ChangeDefaultDevice(bool aInput)
+{
+  vector<AudioObjectID> ids = GetDeviceIds(aInput);
+  if (ids.size() < 2) { // No other choice!
+    return false;
+  }
+
+  AudioObjectID currentId = GetDefaultDeviceId(aInput);
+  // Get next available device.
+  AudioObjectID newId;
+  for (AudioObjectID id: ids) {
+    if (id != currentId) {
+      newId = id;
+      break;
+    }
+  }
+
+  return SetDefaultDevice(newId, aInput);
+}

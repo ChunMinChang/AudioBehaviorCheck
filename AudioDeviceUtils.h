@@ -18,6 +18,7 @@ public:
   static bool IsOutput(AudioObjectID aId);
   static vector<AudioObjectID> GetAllDeviceIds();
   static vector<AudioObjectID> GetDeviceIds(bool aInput);
+  static bool ChangeDefaultDevice(bool aInput);
 };
 
 #endif // #ifndef AUDIODEVICEUTILS_H
