@@ -87,13 +87,13 @@ GetDeviceName(AudioObjectID aID)
   OSStatus r = AudioObjectGetPropertyData(aID, &kDeviceNamePropertyAddress,
                                           0, NULL, &size, &data);
   if (r != noErr || !data) {
-    return ""; // TODO: Not a good style. Fix later.
+    return ""; // TODO: Not a good style. Fix it later.
   }
 
   char* name = CFStringRefToUTF8(data);
   CFRelease(data);
   if (!name) {
-    return ""; // TODO: Not a good style. Fix later.
+    return ""; // TODO: Not a good style. Fix it later.
   }
 
   return std::string(name);
