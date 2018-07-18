@@ -39,7 +39,7 @@ const AudioObjectPropertyAddress kOutputDeviceStreamsPropertyAddress = {
 };
 
 /* static */ AudioObjectID
-AudioDeviceUtils::GetDefaultDeviceID(bool aInput)
+AudioDeviceUtils::GetDefaultDeviceId(bool aInput)
 {
   AudioObjectID id;
   UInt32 size = sizeof(id);
@@ -51,7 +51,7 @@ AudioDeviceUtils::GetDefaultDeviceID(bool aInput)
 }
 
 /* static */ vector<AudioObjectID>
-AudioDeviceUtils::GetAllDeviceIDs()
+AudioDeviceUtils::GetAllDeviceIds()
 {
   vector<AudioObjectID> ids;
   UInt32 size = 0;
@@ -111,11 +111,11 @@ CFStringRefToUTF8(CFStringRef aString)
 }
 
 /* static */ string
-AudioDeviceUtils::GetDeviceName(AudioObjectID aID)
+AudioDeviceUtils::GetDeviceName(AudioObjectID aId)
 {
   CFStringRef data = nullptr;
   UInt32 size = sizeof(data);
-  OSStatus r = AudioObjectGetPropertyData(aID, &kDeviceNamePropertyAddress,
+  OSStatus r = AudioObjectGetPropertyData(aId, &kDeviceNamePropertyAddress,
                                           0, NULL, &size, &data);
   if (r != noErr || !data) {
     return ""; // TODO: Not a good style. Fix it later.

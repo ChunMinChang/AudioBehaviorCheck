@@ -20,13 +20,13 @@ void printDevicesID(vector<AudioObjectID> ids)
 
 int main()
 {
-  vector<AudioObjectID> ids = AudioDeviceUtils::GetAllDeviceIDs();
+  vector<AudioObjectID> ids = AudioDeviceUtils::GetAllDeviceIds();
   printDevicesID(ids);
 
-  AudioObjectID defaultInput = AudioDeviceUtils::GetDefaultDeviceID(true);
+  AudioObjectID defaultInput = AudioDeviceUtils::GetDefaultDeviceId(true);
   cout << "default input: " << defaultInput << endl;
 
-  AudioObjectID defaultOutput = AudioDeviceUtils::GetDefaultDeviceID(false);
+  AudioObjectID defaultOutput = AudioDeviceUtils::GetDefaultDeviceId(false);
   cout << "default output: " << defaultOutput << endl;
 
   return 0;

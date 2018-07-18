@@ -12,8 +12,8 @@ using std::string;
 class AudioDeviceUtils
 {
 public:
-  static AudioObjectID GetDefaultDeviceID(bool aInput);
-  static vector<AudioObjectID> GetAllDeviceIDs();
+  static AudioObjectID GetDefaultDeviceId(bool aInput);
+  static vector<AudioObjectID> GetAllDeviceIds();
   static bool IsInput(AudioObjectID aId);
   static bool IsOutput(AudioObjectID aId);
   static string GetDeviceName(AudioObjectID aID);
