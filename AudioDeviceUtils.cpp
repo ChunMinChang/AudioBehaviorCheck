@@ -118,10 +118,7 @@ AudioDeviceUtils::GetDefaultDeviceID(bool aInput)
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
   OSStatus r = AudioObjectGetPropertyData(kAudioObjectSystemObject, address,
                                           0, 0, &size, &id);
-  if (r != noErr) {
-    return kAudioObjectUnknown;
-  }
-  return id;
+  return r == noErr ? id : kAudioObjectUnknown;
 }
 
 UInt32
@@ -130,11 +127,7 @@ GetNumberOfStreams(AudioObjectID aId, bool aInput) {
     &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
   UInt32 size = 0;
   OSStatus r = AudioObjectGetPropertyDataSize(aId, address, 0, NULL, &size);
-  if (r != noErr) {
-    return 0;
-  }
-
-  return static_cast<UInt32>(size / sizeof(AudioStreamID));
+  return r == noErr ? static_cast<UInt32>(size / sizeof(AudioStreamID)) : 0;
 }
 
 /* static */ bool
