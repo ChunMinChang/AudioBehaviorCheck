@@ -41,4 +41,7 @@ We should put them to test here.
 ### ```test_listener.cpp```
 Test for listening device-changed events.
 
+### ```test_utils.cpp```
+Test for get device-related information.
+
 [gist]: https://gist.github.com/ChunMinChang/47b8712ed57b96721eec18dede39d2f9 "Note for coreaudio"
