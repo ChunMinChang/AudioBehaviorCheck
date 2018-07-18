@@ -129,3 +129,18 @@ AudioDeviceUtils::GetAllDeviceIds()
 
   return ids;
 }
+
+/* static */
+vector<AudioObjectID>
+AudioDeviceUtils::GetDeviceIds(bool aInput) {
+  vector<AudioObjectID> ids;
+
+  vector<AudioObjectID> all = GetAllDeviceIds();
+  for (AudioObjectID id : all) {
+    if (GetNumberOfStreams(id, aInput) > 0) {
+      ids.push_back(id);
+    }
+  }
+
+  return ids;
+}
