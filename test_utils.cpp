@@ -22,15 +22,11 @@ void printDevicesName(vector<string> names)
 
 int main()
 {
-  vector<AudioObjectID> outs = AudioDeviceUtils::GetOutputDevicesID();
-  printDevicesID(outs);
-  vector<string> outNames = AudioDeviceUtils::GetDevicesName(outs);
-  printDevicesName(outNames);
+  vector<AudioObjectID> ids = AudioDeviceUtils::GetAllDeviceIDs();
+  printDevicesID(ids);
 
-  vector<AudioObjectID> ins = AudioDeviceUtils::GetInputDevicesID();
-  printDevicesID(ins);
-  vector<string> inNames = AudioDeviceUtils::GetDevicesName(ins);
-  printDevicesName(inNames);
+  vector<string> names = AudioDeviceUtils::GetAllDeviceNames();
+  printDevicesName(names);
 
   return 0;
 }
