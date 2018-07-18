@@ -18,8 +18,8 @@ AudioDeviceUtils::GetAllDeviceIDs()
 {
   vector<AudioObjectID> ids;
   UInt32 size = 0;
-  const AudioObjectPropertyAddress* addr = &kDevicesPropertyAddress;
-  OSStatus r = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, addr,
+  const AudioObjectPropertyAddress* address = &kDevicesPropertyAddress;
+  OSStatus r = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, address,
                                               0, NULL, &size);
   if (r != noErr) {
     return ids;
@@ -27,7 +27,7 @@ AudioDeviceUtils::GetAllDeviceIDs()
 
   UInt32 numbers = static_cast<UInt32>(size / sizeof(AudioObjectID));
   ids.resize(numbers);
-  r = AudioObjectGetPropertyData(kAudioObjectSystemObject, addr,
+  r = AudioObjectGetPropertyData(kAudioObjectSystemObject, address,
                                  0, NULL, &size, ids.data());
   if (r != noErr) {
     return ids;
