@@ -19,6 +19,10 @@ You can use ```$ make clean```
 - Able to let DeviceChangeCallback to notify users what exact change is
 - Need to find a way to fire device-changed events without manually unplugging/plugging devices.
 (Is it possible?)
+  - If there is more than 2 devices on input or output side,
+    we can use ```AudioDeviceUtils::ChangeDefaultDevice``` to change the default device.
+    The default-device-changed callback should be fired in this case.
+    (NOTE: ```AudioDeviceUtils::ChangeDefaultDevice``` should be moved to other module)
 - Test some APIs that might use mutex inside AudioUnit and see if they will lead to a deadlock.
 
 ## Tests
@@ -42,6 +46,6 @@ We should put them to test here.
 Test for listening device-changed events.
 
 ### ```test_utils.cpp```
-Test for get device-related information.
+Test to get device-related information.
 
 [gist]: https://gist.github.com/ChunMinChang/47b8712ed57b96721eec18dede39d2f9 "Note for coreaudio"

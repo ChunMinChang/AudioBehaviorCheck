@@ -154,6 +154,8 @@ SetDefaultDevice(AudioObjectID aId, bool aInput)
                                     0, NULL, sizeof(aId), &aId) == noErr;
 }
 
+// TODO: This should move to other module!
+//       We should only do simple get/set method here.
 /* static */ bool
 AudioDeviceUtils::ChangeDefaultDevice(bool aInput)
 {
