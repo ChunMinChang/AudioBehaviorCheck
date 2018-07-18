@@ -13,24 +13,6 @@ const AudioObjectPropertyAddress kDeviceNameProperty = {
   kAudioObjectPropertyElementMaster
 };
 
-static char*
-CFStringRefToUTF8(CFStringRef aString)
-{
-  if (!aString) {
-    return nullptr;
-  }
-
-  CFIndex length = CFStringGetLength(aString);
-  CFIndex size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
-  char *buffer = new char[size];
-  if (!CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
-    delete [] buffer;
-    buffer = nullptr;
-  }
-
-  return buffer;
-}
-
 /* static */ vector<AudioDeviceID>
 AudioDeviceUtils::GetAllDeviceIDs()
 {
@@ -51,6 +33,24 @@ AudioDeviceUtils::GetAllDeviceIDs()
   }
 
   return IDs;
+}
+
+static char*
+CFStringRefToUTF8(CFStringRef aString)
+{
+  if (!aString) {
+    return nullptr;
+  }
+
+  CFIndex length = CFStringGetLength(aString);
+  CFIndex size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+  char *buffer = new char[size];
+  if (!CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
+    delete [] buffer;
+    buffer = nullptr;
+  }
+
+  return buffer;
 }
 
 /* static */ string
