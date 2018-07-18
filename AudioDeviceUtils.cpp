@@ -25,6 +25,18 @@ const AudioObjectPropertyAddress kDefaultInputDevicePropertyAddress = {
   kAudioObjectPropertyElementMaster
 };
 
+const AudioObjectPropertyAddress kInputDeviceStreamsPropertyAddress = {
+  kAudioDevicePropertyStreams,
+  kAudioObjectPropertyScopeInput,
+  kAudioObjectPropertyElementMaster
+};
+
+const AudioObjectPropertyAddress kOutputDeviceStreamsPropertyAddress = {
+  kAudioDevicePropertyStreams,
+  kAudioObjectPropertyScopeOutput,
+  kAudioObjectPropertyElementMaster
+};
+
 /* static */ vector<AudioObjectID>
 AudioDeviceUtils::GetAllDeviceIDs()
 {
@@ -110,4 +122,27 @@ AudioDeviceUtils::GetDefaultDeviceID(bool aInput)
     return kAudioObjectUnknown;
   }
   return id;
+}
+
+UInt32
+GetNumberOfStreams(AudioObjectID aId, bool aInput) {
+  const AudioObjectPropertyAddress* address = aInput ?
+    &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
+  UInt32 size = 0;
+  OSStatus r = AudioObjectGetPropertyDataSize(aId, address, 0, NULL, &size);
+  if (r != noErr) {
+    return 0;
+  }
+
+  return static_cast<UInt32>(size / sizeof(AudioStreamID));
+}
+
+/* static */ bool
+AudioDeviceUtils::IsInput(AudioObjectID aId) {
+  return GetNumberOfStreams(aId, true) > 0;
+}
+
+/* static */ bool
+AudioDeviceUtils::IsOutput(AudioObjectID aId) {
+  return GetNumberOfStreams(aId, false) > 0;
 }

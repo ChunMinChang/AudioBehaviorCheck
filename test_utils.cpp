@@ -8,6 +8,12 @@ void printDevicesID(vector<AudioObjectID> ids)
 {
  for (AudioObjectID id: ids) {
    cout << id << endl;
+   if (AudioDeviceUtils::IsInput(id)) {
+     cout << "\tinput" << endl;
+   }
+   if (AudioDeviceUtils::IsOutput(id)) {
+     cout << "\toutput" << endl;
+   }
  }
  cout << endl;
 }
