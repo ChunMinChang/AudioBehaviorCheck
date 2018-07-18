@@ -16,7 +16,7 @@ const AudioObjectPropertyAddress kDeviceNameProperty = {
 /* static */ vector<AudioDeviceID>
 AudioDeviceUtils::GetAllDeviceIDs()
 {
-  vector<AudioObjectID> ids;
+  vector<AudioDeviceID> ids;
   UInt32 size = 0;
   const AudioObjectPropertyAddress* addr = &kDevicesPropertyAddress;
   OSStatus r = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, addr,
