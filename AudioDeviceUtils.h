@@ -1,10 +1,10 @@
 #ifndef AUDIODEVICEUTILS_H
 #define AUDIODEVICEUTILS_H
 
-#include <CoreAudio/CoreAudio.h>
-
 #include <string>
 #include <vector>
+
+#include <CoreAudio/CoreAudio.h>
 
 using std::vector;
 using std::string;

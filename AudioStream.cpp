@@ -1,4 +1,5 @@
 #include <assert.h>
+
 #include <CoreAudio/CoreAudio.h>
 
 #include "AudioStream.h"
