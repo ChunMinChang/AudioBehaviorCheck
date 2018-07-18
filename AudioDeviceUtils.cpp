@@ -13,10 +13,10 @@ const AudioObjectPropertyAddress kDeviceNameProperty = {
   kAudioObjectPropertyElementMaster
 };
 
-/* static */ vector<AudioDeviceID>
+/* static */ vector<AudioObjectID>
 AudioDeviceUtils::GetAllDeviceIDs()
 {
-  vector<AudioDeviceID> ids;
+  vector<AudioObjectID> ids;
   UInt32 size = 0;
   const AudioObjectPropertyAddress* addr = &kDevicesPropertyAddress;
   OSStatus r = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, addr,
@@ -25,7 +25,7 @@ AudioDeviceUtils::GetAllDeviceIDs()
     return ids;
   }
 
-  UInt32 numbers = static_cast<UInt32>(size / sizeof(AudioDeviceID));
+  UInt32 numbers = static_cast<UInt32>(size / sizeof(AudioObjectID));
   ids.resize(numbers);
   r = AudioObjectGetPropertyData(kAudioObjectSystemObject, addr,
                                  0, NULL, &size, ids.data());
@@ -55,7 +55,7 @@ CFStringRefToUTF8(CFStringRef aString)
 }
 
 /* static */ string
-GetDeviceName(AudioDeviceID aID)
+GetDeviceName(AudioObjectID aID)
 {
   CFStringRef data = nullptr;
   UInt32 size = sizeof(data);
@@ -78,8 +78,8 @@ GetDeviceName(AudioDeviceID aID)
 AudioDeviceUtils::GetAllDeviceNames()
 {
   vector<string> names;
-  vector<AudioDeviceID> ids = GetAllDeviceIDs();
-  for (AudioDeviceID id : ids) {
+  vector<AudioObjectID> ids = GetAllDeviceIDs();
+  for (AudioObjectID id : ids) {
     names.push_back(GetDeviceName(id));
   }
   return names;

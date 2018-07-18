@@ -12,7 +12,7 @@ using std::string;
 class AudioDeviceUtils
 {
 public:
-  static vector<AudioDeviceID> GetAllDeviceIDs();
+  static vector<AudioObjectID> GetAllDeviceIDs();
   static vector<string> GetAllDeviceNames();
 };
 
