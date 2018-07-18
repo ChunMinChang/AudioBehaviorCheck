@@ -112,7 +112,7 @@ AudioDeviceUtils::GetAllDeviceNames()
 /* static */ AudioObjectID
 AudioDeviceUtils::GetDefaultDeviceID(bool aInput)
 {
-  AudioDeviceID id;
+  AudioObjectID id;
   UInt32 size = sizeof(id);
   const AudioObjectPropertyAddress* address = aInput ?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
