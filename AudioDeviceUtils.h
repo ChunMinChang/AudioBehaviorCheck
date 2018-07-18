@@ -13,10 +13,10 @@ class AudioDeviceUtils
 {
 public:
   static AudioObjectID GetDefaultDeviceId(bool aInput);
-  static vector<AudioObjectID> GetAllDeviceIds();
+  static string GetDeviceName(AudioObjectID aID);
   static bool IsInput(AudioObjectID aId);
   static bool IsOutput(AudioObjectID aId);
-  static string GetDeviceName(AudioObjectID aID);
+  static vector<AudioObjectID> GetAllDeviceIds();
 };
 
 #endif // #ifndef AUDIODEVICEUTILS_H
