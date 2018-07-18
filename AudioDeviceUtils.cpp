@@ -16,23 +16,24 @@ const AudioObjectPropertyAddress kDeviceNameProperty = {
 /* static */ vector<AudioDeviceID>
 AudioDeviceUtils::GetAllDeviceIDs()
 {
+  vector<AudioObjectID> ids;
   UInt32 size = 0;
   const AudioObjectPropertyAddress* addr = &kDevicesPropertyAddress;
   OSStatus r = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, addr,
                                               0, NULL, &size);
   if (r != noErr) {
-    return vector<AudioObjectID>();
+    return ids;
   }
 
   UInt32 numbers = static_cast<UInt32>(size / sizeof(AudioDeviceID));
-  vector<AudioObjectID> IDs(numbers);
+  ids.resize(numbers);
   r = AudioObjectGetPropertyData(kAudioObjectSystemObject, addr,
-                                 0, NULL, &size, IDs.data());
+                                 0, NULL, &size, ids.data());
   if (r != noErr) {
-    return vector<AudioObjectID>();
+    return ids;
   }
 
-  return IDs;
+  return ids;
 }
 
 static char*
