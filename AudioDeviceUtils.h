@@ -14,6 +14,7 @@ class AudioDeviceUtils
 public:
   static vector<AudioObjectID> GetAllDeviceIDs();
   static vector<string> GetAllDeviceNames();
+  static AudioObjectID GetDefaultDeviceID(bool aInput);
 };
 
 #endif // #ifndef AUDIODEVICEUTILS_H

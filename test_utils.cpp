@@ -28,5 +28,11 @@ int main()
   vector<string> names = AudioDeviceUtils::GetAllDeviceNames();
   printDevicesName(names);
 
+  AudioObjectID defaultInput = AudioDeviceUtils::GetDefaultDeviceID(true);
+  cout << "default input: " << defaultInput << endl;
+
+  AudioObjectID defaultOutput = AudioDeviceUtils::GetDefaultDeviceID(false);
+  cout << "default output: " << defaultOutput << endl;
+
   return 0;
 }
