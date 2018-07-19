@@ -38,11 +38,11 @@ const AudioObjectPropertyAddress kOutputDeviceStreamsPropertyAddress = {
 };
 
 /* static */ AudioObjectID
-AudioDeviceUtils::GetDefaultDeviceId(bool aInput)
+AudioDeviceUtils::GetDefaultDeviceId(Scope aScope)
 {
   AudioObjectID id;
   UInt32 size = sizeof(id);
-  const AudioObjectPropertyAddress* address = aInput ?
+  const AudioObjectPropertyAddress* address = aScope == Input?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
   OSStatus r = AudioObjectGetPropertyData(kAudioObjectSystemObject, address,
                                           0, 0, &size, &id);
@@ -87,9 +87,9 @@ AudioDeviceUtils::GetDeviceName(AudioObjectID aId)
   return std::string(name);
 }
 
-UInt32
-GetNumberOfStreams(AudioObjectID aId, bool aInput) {
-  const AudioObjectPropertyAddress* address = aInput ?
+/* static */ UInt32
+AudioDeviceUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
+  const AudioObjectPropertyAddress* address = aScope == Input ?
     &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
   UInt32 size = 0;
   OSStatus r = AudioObjectGetPropertyDataSize(aId, address, 0, NULL, &size);
@@ -98,12 +98,12 @@ GetNumberOfStreams(AudioObjectID aId, bool aInput) {
 
 /* static */ bool
 AudioDeviceUtils::IsInput(AudioObjectID aId) {
-  return GetNumberOfStreams(aId, true) > 0;
+  return GetNumberOfStreams(aId, Input) > 0;
 }
 
 /* static */ bool
 AudioDeviceUtils::IsOutput(AudioObjectID aId) {
-  return GetNumberOfStreams(aId, false) > 0;
+  return GetNumberOfStreams(aId, Output) > 0;
 }
 
 /* static */ vector<AudioObjectID>
@@ -130,9 +130,9 @@ AudioDeviceUtils::GetAllDeviceIds()
 }
 
 /* static */ bool
-AudioDeviceUtils::SetDefaultDevice(AudioObjectID aId, bool aInput)
+AudioDeviceUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
 {
-  const AudioObjectPropertyAddress* address = aInput ?
+  const AudioObjectPropertyAddress* address = aScope == Input ?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
   // TODO: This API returns noErr almost in any case. It returns noErr if
   //       aId is kAudioObjectUnknown. It returns noErr even if we set

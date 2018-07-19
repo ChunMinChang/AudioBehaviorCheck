@@ -7,18 +7,21 @@
 using std::cout;
 using std::endl;
 
-string getDefaultDeviceName(bool aInput)
+AudioDeviceUtils::Scope Input = AudioDeviceUtils::Input;
+AudioDeviceUtils::Scope Output = AudioDeviceUtils::Output;
+
+string getDefaultDeviceName(AudioDeviceUtils::Scope aScope)
 {
-  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(aInput);
+  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(aScope);
   return AudioDeviceUtils::GetDeviceName(id);
 }
 
-vector<AudioObjectID> getDeviceIds(bool aInput) {
+vector<AudioObjectID> getDeviceIds(AudioDeviceUtils::Scope aScope) {
   vector<AudioObjectID> ids;
 
   vector<AudioObjectID> all = AudioDeviceUtils::GetAllDeviceIds();
   for (AudioObjectID id : all) {
-    if (aInput) {
+    if (aScope == Input) {
       if (AudioDeviceUtils::IsInput(id)) {
         ids.push_back(id);
       }
@@ -32,14 +35,14 @@ vector<AudioObjectID> getDeviceIds(bool aInput) {
   return ids;
 }
 
-bool changeDefaultDevice(bool aInput)
+bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
 {
-  vector<AudioObjectID> ids = getDeviceIds(aInput);
+  vector<AudioObjectID> ids = getDeviceIds(aScope);
   if (ids.size() < 2) { // No other choice!
     return false;
   }
 
-  AudioObjectID currentId = AudioDeviceUtils::GetDefaultDeviceId(aInput);
+  AudioObjectID currentId = AudioDeviceUtils::GetDefaultDeviceId(aScope);
   // Get next available device.
   AudioObjectID newId;
   for (AudioObjectID id: ids) {
@@ -49,7 +52,7 @@ bool changeDefaultDevice(bool aInput)
     }
   }
 
-  return AudioDeviceUtils::SetDefaultDevice(newId, aInput);
+  return AudioDeviceUtils::SetDefaultDevice(newId, aScope);
 }
 
 bool gDeviceChanged = false;
@@ -65,22 +68,22 @@ int main()
   AudioDeviceListener adl(&OnDeviceChanged);
 
   assert(!gDeviceChanged);
-  cout << "Changing default input device from " << getDefaultDeviceName(true) << endl;
-  bool inputChanged = changeDefaultDevice(true);
+  cout << "Changing default input device from " << getDefaultDeviceName(Input) << endl;
+  bool inputChanged = changeDefaultDevice(Input);
   if (inputChanged) {
     while(!gDeviceChanged) {};
     gDeviceChanged = false;
-    cout << "to " << getDefaultDeviceName(true) << endl;
+    cout << "to " << getDefaultDeviceName(Input) << endl;
   } else {
     cout << endl << "Unable to change!" << endl;
   }
 
-  cout << "Try changing default output device from " << getDefaultDeviceName(false) << endl;
+  cout << "Try changing default output device from " << getDefaultDeviceName(Output) << endl;
   assert(!gDeviceChanged);
-  bool outputChanged = changeDefaultDevice(false);
+  bool outputChanged = changeDefaultDevice(Output);
   if (outputChanged) {
     while(!gDeviceChanged) {};
-    cout << "to " << getDefaultDeviceName(false) << endl;
+    cout << "to " << getDefaultDeviceName(Output) << endl;
   } else {
     cout << endl << "Unable to change!" << endl;
   }

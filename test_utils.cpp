@@ -5,6 +5,9 @@
 using std::cout;
 using std::endl;
 
+AudioDeviceUtils::Scope Input = AudioDeviceUtils::Input;
+AudioDeviceUtils::Scope Output = AudioDeviceUtils::Output;
+
 bool validId(AudioObjectID aId)
 {
   return aId != kAudioObjectUnknown;
@@ -19,9 +22,9 @@ void testGetDefaultDeviceId()
   //       tests.
 
   // If we have default input/output devices, then they must be valid ids.
-  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(true);
+  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
   assert(validId(inId));
-  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(false);
+  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
   assert(validId(outId));
 }
 
@@ -32,7 +35,7 @@ void testGetDeviceName()
   assert(unknown.empty());
 
   // Return an non-empty string if it's a valid id.
-  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(false);
+  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(Output);
   assert(validId(id) == !AudioDeviceUtils::GetDeviceName(id).empty());
 }
 
@@ -42,7 +45,7 @@ void testIsInput()
   assert(!AudioDeviceUtils::IsInput(kAudioObjectUnknown));
 
   // Return true if we have a valid id.
-  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(true);
+  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(Input);
   assert(validId(id) == AudioDeviceUtils::IsInput(id));
 }
 
@@ -52,7 +55,7 @@ void testIsOutput()
   assert(!AudioDeviceUtils::IsOutput(kAudioObjectUnknown));
 
   // Return true if we have a valid id.
-  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(false);
+  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(Output);
   assert(validId(id) == AudioDeviceUtils::IsOutput(id));
 }
 
@@ -77,12 +80,12 @@ void testGetAllDeviceIds()
   }
 }
 
-vector<AudioObjectID> getDeviceIds(bool aInput) {
+vector<AudioObjectID> getDeviceIds(AudioDeviceUtils::Scope aScope) {
   vector<AudioObjectID> ids;
 
   vector<AudioObjectID> all = AudioDeviceUtils::GetAllDeviceIds();
   for (AudioObjectID id : all) {
-    if (aInput) {
+    if (aScope == Input) {
       if (AudioDeviceUtils::IsInput(id)) {
         ids.push_back(id);
       }
@@ -96,14 +99,14 @@ vector<AudioObjectID> getDeviceIds(bool aInput) {
   return ids;
 }
 
-bool changeDefaultDevice(bool aInput)
+bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
 {
-  vector<AudioObjectID> ids = getDeviceIds(aInput);
+  vector<AudioObjectID> ids = getDeviceIds(aScope);
   if (ids.size() < 2) { // No other choice!
     return false;
   }
 
-  AudioObjectID currentId = AudioDeviceUtils::GetDefaultDeviceId(aInput);
+  AudioObjectID currentId = AudioDeviceUtils::GetDefaultDeviceId(aScope);
   // Get next available device.
   AudioObjectID newId;
   for (AudioObjectID id: ids) {
@@ -113,46 +116,46 @@ bool changeDefaultDevice(bool aInput)
     }
   }
 
-  return AudioDeviceUtils::SetDefaultDevice(newId, aInput);
+  return AudioDeviceUtils::SetDefaultDevice(newId, aScope);
 }
 
 void testSetDefaultDevice()
 {
   // Surprisingly it's ok to set default input device to a unknown device
   // in apple's API. The system do nothing in this case.
-  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, true));
+  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, Input));
 
   // Surprisingly it's ok to set default output device to a unknown device
   // in apple's API. The system do nothing in this case.
-  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, false));
+  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, Output));
 
-  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(true);
+  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
   if (validId(inId)) {
     // It's ok to set current default input device to default input device again.
-    assert(AudioDeviceUtils::SetDefaultDevice(inId, true));
+    assert(AudioDeviceUtils::SetDefaultDevice(inId, Input));
     if (!AudioDeviceUtils::IsOutput(inId)) {
       // Surprisingly it's ok to set default output device to a non-output device!
-      assert(AudioDeviceUtils::SetDefaultDevice(inId, false));
+      assert(AudioDeviceUtils::SetDefaultDevice(inId, Output));
     }
   }
 
-  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(false);
+  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
   if (validId(outId)) {
     // It's ok to set current default output device to default input device again.
-    assert(AudioDeviceUtils::SetDefaultDevice(outId, false));
+    assert(AudioDeviceUtils::SetDefaultDevice(outId, Output));
     if (!AudioDeviceUtils::IsInput(outId)) {
       // Surprisingly it's ok to set default intput device to a non-input device!
-      assert(AudioDeviceUtils::SetDefaultDevice(outId, true));
+      assert(AudioDeviceUtils::SetDefaultDevice(outId, Input));
     }
   }
 
   // It's ok to change the default input device if there are more than 1
   // input devices. Otherwise, it's failed to do that.
-  assert((getDeviceIds(true).size() > 1) == changeDefaultDevice(true));
+  assert((getDeviceIds(Input).size() > 1) == changeDefaultDevice(Input));
 
   // It's ok to change the default output device if there are more than 1
   // output devices. Otherwise, it's failed to do that.
-  assert((getDeviceIds(false).size() > 1) == changeDefaultDevice(false));
+  assert((getDeviceIds(Output).size() > 1) == changeDefaultDevice(Output));
 }
 
 int main()
