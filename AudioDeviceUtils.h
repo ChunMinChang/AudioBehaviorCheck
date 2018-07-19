@@ -18,10 +18,6 @@ public:
   static bool IsOutput(AudioObjectID aId);
   static bool SetDefaultDevice(AudioObjectID aId, bool aInput);
   static vector<AudioObjectID> GetAllDeviceIds();
-  static vector<AudioObjectID> GetDeviceIds(bool aInput);
-  // TODO: This should move to other module!
-  //       We should only do simple get/set method here.
-  static bool ChangeDefaultDevice(bool aInput);
 };
 
 #endif // #ifndef AUDIODEVICEUTILS_H

@@ -78,6 +78,45 @@ void testGetAllDeviceIds()
   }
 }
 
+vector<AudioObjectID> getDeviceIds(bool isInput) {
+  vector<AudioObjectID> ids;
+
+  vector<AudioObjectID> all = AudioDeviceUtils::GetAllDeviceIds();
+  for (AudioObjectID id : all) {
+    if (isInput) {
+      if (AudioDeviceUtils::IsInput(id)) {
+        ids.push_back(id);
+      }
+    } else {
+      if (AudioDeviceUtils::IsOutput(id)) {
+        ids.push_back(id);
+      }
+    }
+  }
+
+  return ids;
+}
+
+bool changeDefaultDevice(bool isInput)
+{
+  vector<AudioObjectID> ids = getDeviceIds(isInput);
+  if (ids.size() < 2) { // No other choice!
+    return false;
+  }
+
+  AudioObjectID currentId = AudioDeviceUtils::GetDefaultDeviceId(isInput);
+  // Get next available device.
+  AudioObjectID newId;
+  for (AudioObjectID id: ids) {
+    if (id != currentId) {
+      newId = id;
+      break;
+    }
+  }
+
+  return AudioDeviceUtils::SetDefaultDevice(newId, isInput);
+}
+
 void testSetDefaultDevice()
 {
   // Surprisingly it's ok to set default input device to a unknown device
@@ -107,6 +146,14 @@ void testSetDefaultDevice()
       assert(AudioDeviceUtils::SetDefaultDevice(outId, true));
     }
   }
+
+  // It's ok to change the default input device if there are more than 1
+  // input devices. Otherwise, it's failed to do that.
+  assert((getDeviceIds(true).size() > 1) == changeDefaultDevice(true));
+
+  // It's ok to change the default output device if there are more than 1
+  // output devices. Otherwise, it's failed to do that.
+  assert((getDeviceIds(false).size() > 1) == changeDefaultDevice(false));
 }
 
 int main()

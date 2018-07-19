@@ -130,21 +130,6 @@ AudioDeviceUtils::GetAllDeviceIds()
   return ids;
 }
 
-/* static */
-vector<AudioObjectID>
-AudioDeviceUtils::GetDeviceIds(bool aInput) {
-  vector<AudioObjectID> ids;
-
-  vector<AudioObjectID> all = GetAllDeviceIds();
-  for (AudioObjectID id : all) {
-    if (GetNumberOfStreams(id, aInput) > 0) {
-      ids.push_back(id);
-    }
-  }
-
-  return ids;
-}
-
 /* static */ bool
 AudioDeviceUtils::SetDefaultDevice(AudioObjectID aId, bool aInput)
 {
@@ -156,27 +141,4 @@ AudioDeviceUtils::SetDefaultDevice(AudioObjectID aId, bool aInput)
   //       It works weirdly. It's better to check the aId by ourselves.
   return AudioObjectSetPropertyData(kAudioObjectSystemObject, address,
                                     0, NULL, sizeof(aId), &aId) == noErr;
-}
-
-// TODO: This should move to other module!
-//       We should only do simple get/set method here.
-/* static */ bool
-AudioDeviceUtils::ChangeDefaultDevice(bool aInput)
-{
-  vector<AudioObjectID> ids = GetDeviceIds(aInput);
-  if (ids.size() < 2) { // No other choice!
-    return false;
-  }
-
-  AudioObjectID currentId = GetDefaultDeviceId(aInput);
-  // Get next available device.
-  AudioObjectID newId;
-  for (AudioObjectID id: ids) {
-    if (id != currentId) {
-      newId = id;
-      break;
-    }
-  }
-
-  return SetDefaultDevice(newId, aInput);
 }
