@@ -1,14 +1,13 @@
 #include "AudioDeviceUtils.h"
-
-#include <cassert>
-#include <iostream>
+#include <cassert>  // for assert
+#include <iostream> // for std::cout, std::endl
 
 using std::cout;
 using std::endl;
 
-bool validId(AudioObjectID id)
+bool validId(AudioObjectID aId)
 {
-  return id != kAudioObjectUnknown;
+  return aId != kAudioObjectUnknown;
 }
 
 void testGetDefaultDeviceId()
@@ -57,14 +56,14 @@ void testIsOutput()
   assert(validId(id) == AudioDeviceUtils::IsOutput(id));
 }
 
-void printDeviceInfo(AudioObjectID id)
+void printDeviceInfo(AudioObjectID aId)
 {
-  string name = AudioDeviceUtils::GetDeviceName(id);
-  cout << "Device " << id << " : " << name << " >";
-  if (AudioDeviceUtils::IsInput(id)) {
+  string name = AudioDeviceUtils::GetDeviceName(aId);
+  cout << "Device " << aId << " : " << name << " >";
+  if (AudioDeviceUtils::IsInput(aId)) {
     cout << " input";
   }
-  if (AudioDeviceUtils::IsOutput(id)) {
+  if (AudioDeviceUtils::IsOutput(aId)) {
     cout << " output";
   }
   cout << endl;
@@ -78,12 +77,12 @@ void testGetAllDeviceIds()
   }
 }
 
-vector<AudioObjectID> getDeviceIds(bool isInput) {
+vector<AudioObjectID> getDeviceIds(bool aInput) {
   vector<AudioObjectID> ids;
 
   vector<AudioObjectID> all = AudioDeviceUtils::GetAllDeviceIds();
   for (AudioObjectID id : all) {
-    if (isInput) {
+    if (aInput) {
       if (AudioDeviceUtils::IsInput(id)) {
         ids.push_back(id);
       }
@@ -97,14 +96,14 @@ vector<AudioObjectID> getDeviceIds(bool isInput) {
   return ids;
 }
 
-bool changeDefaultDevice(bool isInput)
+bool changeDefaultDevice(bool aInput)
 {
-  vector<AudioObjectID> ids = getDeviceIds(isInput);
+  vector<AudioObjectID> ids = getDeviceIds(aInput);
   if (ids.size() < 2) { // No other choice!
     return false;
   }
 
-  AudioObjectID currentId = AudioDeviceUtils::GetDefaultDeviceId(isInput);
+  AudioObjectID currentId = AudioDeviceUtils::GetDefaultDeviceId(aInput);
   // Get next available device.
   AudioObjectID newId;
   for (AudioObjectID id: ids) {
@@ -114,7 +113,7 @@ bool changeDefaultDevice(bool isInput)
     }
   }
 
-  return AudioDeviceUtils::SetDefaultDevice(newId, isInput);
+  return AudioDeviceUtils::SetDefaultDevice(newId, aInput);
 }
 
 void testSetDefaultDevice()

@@ -1,8 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <iostream>
-#include <time.h>
+#include <ctime>		// for clock(), CLOCKS_PER_SEC
+#include <iostream>	// for fprintf
 
 #define ENABLE_LOG true
 #define LOG(...) ENABLE_LOG && fprintf(stderr, __VA_ARGS__)

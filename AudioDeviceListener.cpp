@@ -1,10 +1,9 @@
-#include <assert.h>
-
 #include "AudioDeviceListener.h"
+#include <cassert>
 
 const AudioObjectPropertyAddress kDefaultOutputDeviceChangePropertyAddress = {
   kAudioHardwarePropertyDefaultOutputDevice,
-  kAudioObjectPropertyScopeGlobal, 
+  kAudioObjectPropertyScopeGlobal,
   kAudioObjectPropertyElementMaster };
 
 const AudioObjectPropertyAddress kDefaultInputDeviceChangePropertyAddress = {
@@ -50,7 +49,7 @@ AudioDeviceListener::AudioDeviceListener(DeviceChangeCallback aCallbck)
   mDeviceListener = std::make_unique<PropertyListener> (
     kAudioObjectSystemObject, &kDevicesPropertyAddress,
     aCallbck);
-  
+
   if (!AddPropertyListener(mDefaultOutputListener.get())) {
     mDefaultOutputListener.reset();
   }

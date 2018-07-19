@@ -1,9 +1,8 @@
 #ifndef AUDIODEVICELISTENER_H
 #define AUDIODEVICELISTENER_H
 
-#include <memory> // std::unique_ptr
-
 #include <CoreAudio/AudioHardware.h>
+#include <memory> // std::unique_ptr
 
 typedef void (* DeviceChangeCallback)();
 
@@ -22,7 +21,7 @@ private:
                           UInt32 aNumAddresses,
                           const AudioObjectPropertyAddress aAddresses[],
                           void* aData);
-  
+
   std::unique_ptr<PropertyListener> mDefaultOutputListener;
   std::unique_ptr<PropertyListener> mDefaultInputListener;
   std::unique_ptr<PropertyListener> mDeviceListener;

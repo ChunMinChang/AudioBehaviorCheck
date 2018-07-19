@@ -15,15 +15,13 @@
 //      |                            |
 //      v           holds            |
 //   mutex_M -------------------> Thread B
-
+#include "AudioStream.h"          // for AudioStream
+#include "OwnedCriticalSection.h" // for OwnedCriticalSection
+#include "utils.h"                // for LOG
 #include <assert.h>               // for assert
 #include <pthread.h>              // for pthread
 #include <signal.h>               // for signal
 #include <unistd.h>               // for sleep, usleep
-
-#include "AudioStream.h"          // for AudioStream
-#include "utils.h"                // for LOG
-#include "OwnedCriticalSection.h" // for OwnedCriticalSection
 
 // The signal alias for calling our thread killer.
 #define CALL_THREAD_KILLER SIGUSR1

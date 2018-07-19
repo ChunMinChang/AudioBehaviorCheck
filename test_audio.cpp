@@ -1,7 +1,7 @@
 #include "AudioStream.h"
 #include "utils.h"  // for delay
 #include <math.h>   // for M_PI, sin
-#include <vector>
+#include <vector>   // for vector
 
 const unsigned int kFequency = 44100;
 const unsigned int kChannels = 2;

@@ -1,6 +1,5 @@
-#include <CoreFoundation/CFString.h> // for CFStringXXX
-
 #include "AudioDeviceUtils.h"
+#include <CoreFoundation/CFString.h> // for CFStringXXX
 
 const AudioObjectPropertyAddress kDevicesPropertyAddress = {
   kAudioHardwarePropertyDevices,

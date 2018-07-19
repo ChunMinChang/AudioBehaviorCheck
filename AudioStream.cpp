@@ -1,8 +1,7 @@
-#include <assert.h>
-
-#include <CoreAudio/CoreAudio.h>
-
 #include "AudioStream.h"
+#include <CoreAudio/CoreAudio.h>
+#include <cassert>
+
 
 #define AU_OUT_BUS  0
 // #define AU_IN_BUS   1
