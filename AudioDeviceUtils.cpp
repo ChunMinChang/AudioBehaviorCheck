@@ -145,11 +145,15 @@ AudioDeviceUtils::GetDeviceIds(bool aInput) {
   return ids;
 }
 
-bool
-SetDefaultDevice(AudioObjectID aId, bool aInput)
+/* static */ bool
+AudioDeviceUtils::SetDefaultDevice(AudioObjectID aId, bool aInput)
 {
   const AudioObjectPropertyAddress* address = aInput ?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
+  // TODO: This API returns noErr almost in any case. It returns noErr if
+  //       aId is kAudioObjectUnknown. It returns noErr even if we set
+  //       a non-input/non-output device to the default input/output device.
+  //       It works weirdly. It's better to check the aId by ourselves.
   return AudioObjectSetPropertyData(kAudioObjectSystemObject, address,
                                     0, NULL, sizeof(aId), &aId) == noErr;
 }

@@ -16,6 +16,7 @@ public:
   static string GetDeviceName(AudioObjectID aID);
   static bool IsInput(AudioObjectID aId);
   static bool IsOutput(AudioObjectID aId);
+  static bool SetDefaultDevice(AudioObjectID aId, bool aInput);
   static vector<AudioObjectID> GetAllDeviceIds();
   static vector<AudioObjectID> GetDeviceIds(bool aInput);
   // TODO: This should move to other module!

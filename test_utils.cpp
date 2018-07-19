@@ -78,12 +78,44 @@ void testGetAllDeviceIds()
   }
 }
 
+void testSetDefaultDevice()
+{
+  // Surprisingly it's ok to set default input device to a unknown device
+  // in apple's API. The system do nothing in this case.
+  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, true));
+
+  // Surprisingly it's ok to set default output device to a unknown device
+  // in apple's API. The system do nothing in this case.
+  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, false));
+
+  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(true);
+  if (validId(inId)) {
+    // It's ok to set current default input device to default input device again.
+    assert(AudioDeviceUtils::SetDefaultDevice(inId, true));
+    if (!AudioDeviceUtils::IsOutput(inId)) {
+      // Surprisingly it's ok to set default output device to a non-output device!
+      assert(AudioDeviceUtils::SetDefaultDevice(inId, false));
+    }
+  }
+
+  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(false);
+  if (validId(outId)) {
+    // It's ok to set current default output device to default input device again.
+    assert(AudioDeviceUtils::SetDefaultDevice(outId, false));
+    if (!AudioDeviceUtils::IsInput(outId)) {
+      // Surprisingly it's ok to set default intput device to a non-input device!
+      assert(AudioDeviceUtils::SetDefaultDevice(outId, true));
+    }
+  }
+}
+
 int main()
 {
   testGetDefaultDeviceId();
   testGetDeviceName();
   testIsInput();
   testIsOutput();
+  testSetDefaultDevice();
   testGetAllDeviceIds();
   return 0;
 }
