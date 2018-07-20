@@ -70,7 +70,8 @@ CFStringRefToUTF8(CFStringRef aString)
   }
 
   CFIndex length = CFStringGetLength(aString);
-  CFIndex size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
+  CFIndex size = CFStringGetMaximumSizeForEncoding(length,
+                                                   kCFStringEncodingUTF8) + 1;
   char* buffer = new char[size];
   if (!CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
     delete [] buffer;
@@ -104,7 +105,8 @@ AudioDeviceUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
   UInt32 size = sizeof(data);
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kInputDeviceSourcePropertyAddress : &kOutputDeviceSourcePropertyAddress;
-  OSStatus r = AudioObjectGetPropertyData(aId, address, 0, nullptr, &size, &data);
+  OSStatus r = AudioObjectGetPropertyData(aId, address, 0, nullptr, &size,
+                                          &data);
   if (r != noErr) {
     return 0; // TODO: Maybe throw an error instead.
   }
@@ -137,8 +139,8 @@ AudioDeviceUtils::GetAllDeviceIds()
   vector<AudioObjectID> ids;
   UInt32 size = 0;
   const AudioObjectPropertyAddress* address = &kDevicesPropertyAddress;
-  OSStatus r = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, address,
-                                              0, nullptr, &size);
+  OSStatus r = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject,
+                                              address, 0, nullptr, &size);
   if (r != noErr) {
     return ids;
   }
