@@ -29,6 +29,9 @@ You can use ```$ make clean```
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
 - Splpit tests in ```test_utils.cpp``` into smaller chunks.
+- Rename *AudioDeviceUtils* into *AudioDeviceInternalUtils* and
+  create an new module named *AudioDeviceUtils* to write some common used API
+  based on *AudioDeviceInternalUtils*.
 
 ## Tests
 
