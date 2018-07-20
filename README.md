@@ -28,6 +28,7 @@ You can use ```$ make clean```
 - Wrap native ```AudioObjectGetPropertyData``` to out custom GetData API
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
+- Splpit tests in ```test_utils.cpp``` into smaller chunks.
 
 ## Tests
 
