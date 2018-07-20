@@ -17,7 +17,7 @@ public:
     Output = false
   };
   static AudioObjectID GetDefaultDeviceId(Scope aScope);
-  static string GetDeviceName(AudioObjectID aID);
+  static string GetDeviceName(AudioObjectID aId);
   static bool IsInput(AudioObjectID aId);
   static bool IsOutput(AudioObjectID aId);
   static bool SetDefaultDevice(AudioObjectID aId, Scope aScope);
