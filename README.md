@@ -27,6 +27,7 @@ You can use ```$ make clean```
   and see if they will lead to a deadlock.
 - Wrap native ```AudioObjectGetPropertyData``` to out custom GetData API
 - Change style: remove prefix `a` in all arguments
+- Put all ```AudioObjectPropertyAddress``` into a common header.
 
 ## Tests
 
