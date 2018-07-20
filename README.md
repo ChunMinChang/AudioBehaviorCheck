@@ -26,6 +26,7 @@ You can use ```$ make clean```
 - Test some APIs that might use mutex inside AudioUnit in *test_deadlock.cpp*
   and see if they will lead to a deadlock.
 - Wrap native ```AudioObjectGetPropertyData``` to out custom GetData API
+- Change style: remove prefix `a` in all arguments
 
 ## Tests
 
