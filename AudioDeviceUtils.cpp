@@ -98,15 +98,16 @@ CFStringRefToUTF8(CFStringRef aString)
 /* static */ string
 AudioDeviceUtils::GetDeviceName(AudioObjectID aId)
 {
+  string name;
   CFStringRef data = nullptr;
   UInt32 size = sizeof(data);
   OSStatus r = AudioObjectGetPropertyData(aId, &kDeviceNamePropertyAddress,
                                           0, nullptr, &size, &data);
   if (r != noErr || !data) {
-    return ""; // TODO: Maybe throw an error instead.
+    return name; // TODO: Maybe throw an error instead.
   }
 
-  string name = CFStringRefToUTF8(data);
+  name = CFStringRefToUTF8(data);
   CFRelease(data);
   return name;
 }
