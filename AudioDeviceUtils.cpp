@@ -49,22 +49,25 @@ AudioDeviceUtils::GetDefaultDeviceId(Scope aScope)
   return r == noErr ? id : kAudioObjectUnknown;
 }
 
-static char*
+static string
 CFStringRefToUTF8(CFStringRef aString)
 {
+  string s;
   if (!aString) {
-    return nullptr;
+    return s;
   }
 
   CFIndex length = CFStringGetLength(aString);
   CFIndex size = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
-  char *buffer = new char[size];
+  char* buffer = new char[size];
   if (!CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
     delete [] buffer;
-    buffer = nullptr;
+    return s;
   }
 
-  return buffer;
+  s = string(buffer);
+  delete [] buffer;
+  return s;
 }
 
 /* static */ string
@@ -78,13 +81,9 @@ AudioDeviceUtils::GetDeviceName(AudioObjectID aId)
     return ""; // TODO: Maybe throw an error instead.
   }
 
-  char* name = CFStringRefToUTF8(data);
+  string name = CFStringRefToUTF8(data);
   CFRelease(data);
-  if (!name) {
-    return ""; // TODO: Maybe throw an error instead.
-  }
-
-  return std::string(name);
+  return name;
 }
 
 /* static */ UInt32
