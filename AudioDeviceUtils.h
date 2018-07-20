@@ -18,6 +18,7 @@ public:
   };
   static AudioObjectID GetDefaultDeviceId(Scope aScope);
   static string GetDeviceName(AudioObjectID aId);
+  static UInt32 GetDeviceSource(AudioObjectID aId, Scope aScope);
   static bool IsInput(AudioObjectID aId);
   static bool IsOutput(AudioObjectID aId);
   static bool SetDefaultDevice(AudioObjectID aId, Scope aScope);

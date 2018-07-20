@@ -39,6 +39,28 @@ void testGetDeviceName()
   assert(validId(id) == !AudioDeviceUtils::GetDeviceName(id).empty());
 }
 
+void testGetDeviceSource()
+{
+  UInt32 data;
+  data = AudioDeviceUtils::GetDeviceSource(kAudioObjectUnknown, Input);
+  assert(!data);
+
+  data = AudioDeviceUtils::GetDeviceSource(kAudioObjectUnknown, Output);
+  assert(!data);
+
+  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
+  assert(validId(inId));
+  data = AudioDeviceUtils::GetDeviceSource(inId, Input);
+  cout << "input source data: " << data << endl;
+  // Some USB headset(e.g., Plantronics .Audio 628) fails to get its source.
+
+  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
+  assert(validId(outId));
+  data = AudioDeviceUtils::GetDeviceSource(outId, Output);
+  cout << "output source data: " << data << endl;
+  // Some USB headset(e.g., Plantronics .Audio 628) fails to get its source.
+}
+
 void testIsInput()
 {
   // Return false for an invalid id.
@@ -162,6 +184,7 @@ int main()
 {
   testGetDefaultDeviceId();
   testGetDeviceName();
+  testGetDeviceSource();
   testIsInput();
   testIsOutput();
   testSetDefaultDevice();

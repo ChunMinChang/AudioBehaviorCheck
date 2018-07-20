@@ -37,6 +37,18 @@ const AudioObjectPropertyAddress kOutputDeviceStreamsPropertyAddress = {
   kAudioObjectPropertyElementMaster
 };
 
+const AudioObjectPropertyAddress kInputDeviceSourcePropertyAddress = {
+  kAudioDevicePropertyDataSource,
+  kAudioObjectPropertyScopeInput,
+  kAudioObjectPropertyElementMaster
+};
+
+const AudioObjectPropertyAddress kOutputDeviceSourcePropertyAddress = {
+  kAudioDevicePropertyDataSource,
+  kAudioObjectPropertyScopeOutput,
+  kAudioObjectPropertyElementMaster
+};
+
 /* static */ AudioObjectID
 AudioDeviceUtils::GetDefaultDeviceId(Scope aScope)
 {
@@ -84,6 +96,20 @@ AudioDeviceUtils::GetDeviceName(AudioObjectID aId)
   string name = CFStringRefToUTF8(data);
   CFRelease(data);
   return name;
+}
+
+/* static */ UInt32
+AudioDeviceUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
+  UInt32 data;
+  UInt32 size = sizeof(data);
+  const AudioObjectPropertyAddress* address = aScope == Input ?
+    &kInputDeviceSourcePropertyAddress : &kOutputDeviceSourcePropertyAddress;
+  OSStatus r = AudioObjectGetPropertyData(aId, address, 0, NULL, &size, &data);
+  if (r != noErr) {
+    return 0; // TODO: Maybe throw an error instead.
+  }
+
+  return data;
 }
 
 /* static */ UInt32
