@@ -61,6 +61,45 @@ void testGetDeviceSource()
   // Some USB headset(e.g., Plantronics .Audio 628) fails to get its source.
 }
 
+void testGetDeviceSourceName()
+{
+  UInt32 data = 0;
+  string name;
+
+  name = AudioDeviceUtils::GetDeviceSourceName(kAudioObjectUnknown, Input, data);
+  assert(name.empty());
+
+  name = AudioDeviceUtils::GetDeviceSourceName(kAudioObjectUnknown, Output, data);
+  assert(name.empty());
+
+  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
+  assert(validId(inId));
+  name = AudioDeviceUtils::GetDeviceSourceName(inId, Output, data);
+  assert(name.empty());
+  name = AudioDeviceUtils::GetDeviceSourceName(inId, Input, data);
+  assert(name.empty());
+
+  data = AudioDeviceUtils::GetDeviceSource(inId, Input);
+  name = AudioDeviceUtils::GetDeviceSourceName(inId, Input, data);
+  cout << "input source data: " << data << ", name: " << name << endl;
+  // Some USB headset(e.g., Plantronics .Audio 628) fails to get its source.
+
+  name.clear();
+  data = 0;
+
+  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
+  assert(validId(outId));
+  name = AudioDeviceUtils::GetDeviceSourceName(outId, Input, data);
+  assert(name.empty());
+  name = AudioDeviceUtils::GetDeviceSourceName(outId, Output, data);
+  assert(name.empty());
+
+  data = AudioDeviceUtils::GetDeviceSource(outId, Output);
+  name = AudioDeviceUtils::GetDeviceSourceName(outId, Output, data);
+  cout << "output source data: " << data << ", name: " << name << endl;
+  // Some USB headset(e.g., Plantronics .Audio 628) fails to get its source.
+}
+
 void testIsInput()
 {
   // Return false for an invalid id.
@@ -185,6 +224,7 @@ int main()
   testGetDefaultDeviceId();
   testGetDeviceName();
   testGetDeviceSource();
+  testGetDeviceSourceName();
   testIsInput();
   testIsOutput();
   testSetDefaultDevice();
