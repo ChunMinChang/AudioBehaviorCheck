@@ -25,6 +25,7 @@ You can use ```$ make clean```
     we can use ```AudioDeviceUtils::SetDefaultDevice``` to change the default device.
 - Test some APIs that might use mutex inside AudioUnit in *test_deadlock.cpp*
   and see if they will lead to a deadlock.
+- Wrap native ```AudioObjectGetPropertyData``` to out custom GetData API
 
 ## Tests
 
