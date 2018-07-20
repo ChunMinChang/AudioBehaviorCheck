@@ -13,14 +13,14 @@ const AudioObjectPropertyAddress kDeviceNamePropertyAddress = {
   kAudioObjectPropertyElementMaster
 };
 
-const AudioObjectPropertyAddress kDefaultOutputDevicePropertyAddress = {
-  kAudioHardwarePropertyDefaultOutputDevice,
+const AudioObjectPropertyAddress kDefaultInputDevicePropertyAddress = {
+  kAudioHardwarePropertyDefaultInputDevice,
   kAudioObjectPropertyScopeGlobal,
   kAudioObjectPropertyElementMaster
 };
 
-const AudioObjectPropertyAddress kDefaultInputDevicePropertyAddress = {
-  kAudioHardwarePropertyDefaultInputDevice,
+const AudioObjectPropertyAddress kDefaultOutputDevicePropertyAddress = {
+  kAudioHardwarePropertyDefaultOutputDevice,
   kAudioObjectPropertyScopeGlobal,
   kAudioObjectPropertyElementMaster
 };
