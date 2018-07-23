@@ -28,6 +28,26 @@ void testGetDefaultDeviceId()
   assert(validId(outId));
 }
 
+void testIsInput()
+{
+  // Return false for an invalid id.
+  assert(!AudioDeviceUtils::IsInput(kAudioObjectUnknown));
+
+  // Return true if we have a valid id.
+  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(Input);
+  assert(validId(id) == AudioDeviceUtils::IsInput(id));
+}
+
+void testIsOutput()
+{
+  // Return false for an invalid id.
+  assert(!AudioDeviceUtils::IsOutput(kAudioObjectUnknown));
+
+  // Return true if we have a valid id.
+  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(Output);
+  assert(validId(id) == AudioDeviceUtils::IsOutput(id));
+}
+
 void testGetDeviceName()
 {
   // Return empty string if it's a inavlid id.
@@ -178,26 +198,6 @@ void testGetDeviceSourceName()
   testGetDeviceSourceNameValidParameters();
 }
 
-void testIsInput()
-{
-  // Return false for an invalid id.
-  assert(!AudioDeviceUtils::IsInput(kAudioObjectUnknown));
-
-  // Return true if we have a valid id.
-  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(Input);
-  assert(validId(id) == AudioDeviceUtils::IsInput(id));
-}
-
-void testIsOutput()
-{
-  // Return false for an invalid id.
-  assert(!AudioDeviceUtils::IsOutput(kAudioObjectUnknown));
-
-  // Return true if we have a valid id.
-  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(Output);
-  assert(validId(id) == AudioDeviceUtils::IsOutput(id));
-}
-
 void printDeviceInfo(AudioObjectID aId)
 {
   string name = AudioDeviceUtils::GetDeviceName(aId);
@@ -300,11 +300,11 @@ void testSetDefaultDevice()
 int main()
 {
   testGetDefaultDeviceId();
+  testIsInput();
+  testIsOutput();
   testGetDeviceName();
   testGetDeviceSource();
   testGetDeviceSourceName();
-  testIsInput();
-  testIsOutput();
   testSetDefaultDevice();
   testGetAllDeviceIds();
   return 0;
