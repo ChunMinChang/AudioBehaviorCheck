@@ -23,6 +23,9 @@ public:
                                     UInt32 aSource);
   static bool IsInput(AudioObjectID aId);
   static bool IsOutput(AudioObjectID aId);
+  // TODO: Validate the AudioObjectID and scope by ourselves since the
+  //       underlying native API always return noErr. See comment in its
+  //       implementation.
   static bool SetDefaultDevice(AudioObjectID aId, Scope aScope);
   // NOTE: It's impossible to get input-only or output-only devices in one API
   //       call. Apple doesn't provide that API. To get input-only or

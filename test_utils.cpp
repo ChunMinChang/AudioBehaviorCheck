@@ -224,6 +224,47 @@ void testGetAllDeviceIds()
   assert((validId(inId) || validId(outId)) == !ids.empty());
 }
 
+void testSetDefaultDeviceInvalidId()
+{
+  // Surprisingly it's ok to set default input device to a unknown device
+  // in apple's API. The system do nothing in this case.
+  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, Input));
+
+  // Surprisingly it's ok to set default output device to a unknown device
+  // in apple's API. The system do nothing in this case.
+  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, Output));
+}
+
+void testSetDefaultDeviceSameDefaultDevice()
+{
+  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
+  if (validId(inId)) {
+    // It's ok to set current default input device to default input device again.
+    assert(AudioDeviceUtils::SetDefaultDevice(inId, Input));
+  }
+
+  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
+  if (validId(outId)) {
+    // It's ok to set current default output device to default input device again.
+    assert(AudioDeviceUtils::SetDefaultDevice(outId, Output));
+  }
+}
+
+void testSetDefaultDeviceInvalidScope()
+{
+  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
+  if (validId(inId) && !AudioDeviceUtils::IsOutput(inId)) {
+    // Surprisingly it's ok to set a non-output device to default output device.
+    assert(AudioDeviceUtils::SetDefaultDevice(inId, Output));
+  }
+
+  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
+  if (validId(outId) && !AudioDeviceUtils::IsInput(outId)) {
+    // Surprisingly it's ok to set a non-input device to default intput device.
+    assert(AudioDeviceUtils::SetDefaultDevice(outId, Input));
+  }
+}
+
 bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
 {
   vector<AudioObjectID> ids = AudioDeviceUtils::GetDeviceIds(aScope);
@@ -244,43 +285,25 @@ bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
   return AudioDeviceUtils::SetDefaultDevice(newId, aScope);
 }
 
-void testSetDefaultDevice()
+void testSetDefaultDeviceValidParameters()
 {
-  // Surprisingly it's ok to set default input device to a unknown device
-  // in apple's API. The system do nothing in this case.
-  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, Input));
-
-  // Surprisingly it's ok to set default output device to a unknown device
-  // in apple's API. The system do nothing in this case.
-  assert(AudioDeviceUtils::SetDefaultDevice(kAudioObjectUnknown, Output));
-
-  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
-  if (validId(inId)) {
-    // It's ok to set current default input device to default input device again.
-    assert(AudioDeviceUtils::SetDefaultDevice(inId, Input));
-    if (!AudioDeviceUtils::IsOutput(inId)) {
-      // Surprisingly it's ok to set default output device to a non-output device!
-      assert(AudioDeviceUtils::SetDefaultDevice(inId, Output));
-    }
-  }
-
-  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
-  if (validId(outId)) {
-    // It's ok to set current default output device to default input device again.
-    assert(AudioDeviceUtils::SetDefaultDevice(outId, Output));
-    if (!AudioDeviceUtils::IsInput(outId)) {
-      // Surprisingly it's ok to set default intput device to a non-input device!
-      assert(AudioDeviceUtils::SetDefaultDevice(outId, Input));
-    }
-  }
-
   // It's ok to change the default input device if there are more than 1
   // input devices. Otherwise, it's failed to do that.
-  assert((AudioDeviceUtils::GetDeviceIds(Input).size() > 1) == changeDefaultDevice(Input));
+  bool moreThanOneInput = AudioDeviceUtils::GetDeviceIds(Input).size() > 1;
+  assert(moreThanOneInput == changeDefaultDevice(Input));
 
   // It's ok to change the default output device if there are more than 1
   // output devices. Otherwise, it's failed to do that.
-  assert((AudioDeviceUtils::GetDeviceIds(Output).size() > 1) == changeDefaultDevice(Output));
+  bool moreThanOneOutput = AudioDeviceUtils::GetDeviceIds(Output).size() > 1;
+  assert(moreThanOneOutput == changeDefaultDevice(Output));
+}
+
+void testSetDefaultDevice()
+{
+  testSetDefaultDeviceInvalidId();
+  testSetDefaultDeviceSameDefaultDevice();
+  testSetDefaultDeviceInvalidScope();
+  testSetDefaultDeviceValidParameters();
 }
 
 int main()
