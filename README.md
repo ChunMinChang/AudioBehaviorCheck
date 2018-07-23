@@ -25,6 +25,8 @@ You can use ```$ make clean```
     we can use ```AudioObjectUtils::SetDefaultDevice``` to change the default device.
 - Test some APIs that might use mutex inside AudioUnit in *test_deadlock.cpp*
   and see if they will lead to a deadlock.
+  The potential APIs are ```AudioUnitGetProperty``` and ```AudioUnitSetProperty```.
+- Implement a *AudioUnitUtils* to call ```AudioUnitGetProperty``` and ```AudioUnitSetProperty``` on common things.
 - Replace ```pthread``` by ```std::thread```
 - Wrap native ```AudioObjectGetPropertyData``` to out custom GetData API
 - Change style: remove prefix `a` in all arguments
@@ -42,10 +44,7 @@ Play a sine wave
 ### ```test_deadlock.cpp```
 Prove there is a *mutex* **inside** ```AudioUnit```. It will lead to a deadlock if we don't use it carefully (that's why I wrote the original [gist post][gist].).
 
-Some APIs use the same ```AudioUnit``` mutex
-(that ```AudioComponentFindNext``` or ```AudioComponentInstanceNew``` use)
-will also lead to a deadlock.
-We should put them to test here.
+I think the ```AudioUnitGetProperty``` and ```AudioUnitSetProperty``` might use the same *mutex* that ```AudioComponentFindNext``` or ```AudioComponentInstanceNew``` use. It's reasonable to guess that the ```AudioUnit``` cannot be changed at the same time by different threads.
 
 #### Deadlock
 
