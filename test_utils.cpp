@@ -219,28 +219,9 @@ void testGetAllDeviceIds()
   }
 }
 
-vector<AudioObjectID> getDeviceIds(AudioDeviceUtils::Scope aScope) {
-  vector<AudioObjectID> ids;
-
-  vector<AudioObjectID> all = AudioDeviceUtils::GetAllDeviceIds();
-  for (AudioObjectID id : all) {
-    if (aScope == Input) {
-      if (AudioDeviceUtils::IsInput(id)) {
-        ids.push_back(id);
-      }
-    } else {
-      if (AudioDeviceUtils::IsOutput(id)) {
-        ids.push_back(id);
-      }
-    }
-  }
-
-  return ids;
-}
-
 bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
 {
-  vector<AudioObjectID> ids = getDeviceIds(aScope);
+  vector<AudioObjectID> ids = AudioDeviceUtils::GetDeviceIds(aScope);
   if (ids.size() < 2) { // No other choice!
     return false;
   }
@@ -290,11 +271,11 @@ void testSetDefaultDevice()
 
   // It's ok to change the default input device if there are more than 1
   // input devices. Otherwise, it's failed to do that.
-  assert((getDeviceIds(Input).size() > 1) == changeDefaultDevice(Input));
+  assert((AudioDeviceUtils::GetDeviceIds(Input).size() > 1) == changeDefaultDevice(Input));
 
   // It's ok to change the default output device if there are more than 1
   // output devices. Otherwise, it's failed to do that.
-  assert((getDeviceIds(Output).size() > 1) == changeDefaultDevice(Output));
+  assert((AudioDeviceUtils::GetDeviceIds(Output).size() > 1) == changeDefaultDevice(Output));
 }
 
 int main()
@@ -305,7 +286,7 @@ int main()
   testGetDeviceName();
   testGetDeviceSource();
   testGetDeviceSourceName();
-  testSetDefaultDevice();
   testGetAllDeviceIds();
+  testSetDefaultDevice();
   return 0;
 }

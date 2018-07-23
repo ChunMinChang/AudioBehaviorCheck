@@ -1,5 +1,6 @@
 #include "AudioDeviceUtils.h"
 #include <CoreFoundation/CFString.h> // for CFStringXXX
+#include <functional> // for std::function
 
 const AudioObjectPropertyAddress kDevicesPropertyAddress = {
   kAudioHardwarePropertyDevices,
@@ -189,6 +190,22 @@ AudioDeviceUtils::GetAllDeviceIds()
                                  0, nullptr, &size, ids.data());
   if (r != noErr) {
     return ids;
+  }
+
+  return ids;
+}
+
+/* static */ vector<AudioObjectID>
+AudioDeviceUtils::GetDeviceIds(Scope aScope) {
+  vector<AudioObjectID> ids;
+
+  vector<AudioObjectID> all = AudioDeviceUtils::GetAllDeviceIds();
+  std::function<bool(AudioObjectID)> InScope = aScope == Input ?
+    IsInput : IsOutput;
+  for (AudioObjectID id : all) {
+    if (InScope(id)) {
+      ids.push_back(id);
+    }
   }
 
   return ids;
