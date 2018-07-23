@@ -44,37 +44,31 @@ void OnDeviceChanged() {
   gDeviceChanged = true;
 }
 
+void testChangeDefaultDevice(AudioObjectUtils::Scope aScope)
+{
+  gDeviceChanged = false; // Clear test flag.
+
+  cout << "Default " << (aScope == Input ? "intput" : "output")
+       << " device: " << getDefaultDeviceName(aScope) << endl;
+  bool willBeChanged = changeDefaultDevice(aScope);
+  if (willBeChanged) {
+    while(!gDeviceChanged) {
+      // Force to context-switch by sleeping for 100 millisecond.
+      usleep(100000);
+    };
+    cout << "is changed to " << getDefaultDeviceName(aScope) << endl;
+  } else {
+    cout << endl << "is unable to be changed!" << endl;
+  }
+}
+
 int main()
 {
   cout << "Run test on main thread: " << pthread_self() << endl;
   AudioDeviceListener adl(&OnDeviceChanged);
 
-  assert(!gDeviceChanged);
-  cout << "Changing default input device from " << getDefaultDeviceName(Input) << endl;
-  bool inputChanged = changeDefaultDevice(Input);
-  if (inputChanged) {
-    while(!gDeviceChanged) {
-      // Force to context-switch by sleeping for 100 millisecond.
-      usleep(100000);
-    };
-    gDeviceChanged = false;
-    cout << "to " << getDefaultDeviceName(Input) << endl;
-  } else {
-    cout << endl << "Unable to change!" << endl;
-  }
-
-  cout << "Try changing default output device from " << getDefaultDeviceName(Output) << endl;
-  assert(!gDeviceChanged);
-  bool outputChanged = changeDefaultDevice(Output);
-  if (outputChanged) {
-    while(!gDeviceChanged) {
-      // Force to context-switch by sleeping for 100 millisecond.
-      usleep(100000);
-    };
-    cout << "to " << getDefaultDeviceName(Output) << endl;
-  } else {
-    cout << endl << "Unable to change!" << endl;
-  }
+  testChangeDefaultDevice(Input);
+  testChangeDefaultDevice(Output);
 
   return 0;
 }
