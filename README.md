@@ -28,10 +28,8 @@ You can use ```$ make clean```
 - Wrap native ```AudioObjectGetPropertyData``` to a custom GetData API
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
-- Splpit tests in ```test_utils.cpp``` into smaller chunks.
-- Rename *AudioObjectUtils* into *AudioDeviceInternalUtils* and
-  create an new module named *AudioObjectUtils* to write some common used API
-  based on *AudioDeviceInternalUtils*.
+- Split tests into smaller chunks.
+- Split *AudioObjectUtils* into a *internal* one and a *exposed* one maybe since some APIs are in differen layers.
 
 ## Tests
 
