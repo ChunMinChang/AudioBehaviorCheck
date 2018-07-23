@@ -20,9 +20,6 @@ You can use ```$ make clean```
 - Need to find a way to fire device-added/removed events without
   manually unplugging/plugging devices (Is it possible?).
   - Mayube we need to find a way to fake a device and then add or remove it
-- Need to find a way to fire default-device-changed events
-  - If there is more than 2 devices on input or output side,
-    we can use ```AudioObjectUtils::SetDefaultDevice``` to change the default device.
 - Test some APIs that might use mutex inside AudioUnit in *test_deadlock.cpp*
   and see if they will lead to a deadlock.
   The potential APIs are ```AudioUnitGetProperty``` and ```AudioUnitSetProperty```.
