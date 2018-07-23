@@ -75,13 +75,17 @@ void testGetDeviceSourceInvalidScope()
   UInt32 data = 0;
 
   AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
-  if (validId(inId) && !AudioDeviceUtils::IsOutput(inId)) {
+  bool validInputIsNotOutput = validId(inId) &&
+                               !AudioDeviceUtils::IsOutput(inId);
+  if (validInputIsNotOutput) {
     data = AudioDeviceUtils::GetDeviceSource(inId, Output);
     assert(!data);
   }
 
   AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
-  if (validId(outId) && !AudioDeviceUtils::IsInput(outId)) {
+  bool validOutputIsNotInput = validId(outId) &&
+                               !AudioDeviceUtils::IsInput(outId);
+  if (validOutputIsNotInput) {
     data = AudioDeviceUtils::GetDeviceSource(outId, Input);
     assert(!data);
   }
@@ -133,13 +137,17 @@ void testGetDeviceSourceNameInvalidScope()
   string name;
 
   AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
-  if (validId(inId) && !AudioDeviceUtils::IsOutput(inId)) {
+  bool validInputIsNotOutput = validId(inId) &&
+                               !AudioDeviceUtils::IsOutput(inId);
+  if (validInputIsNotOutput) {
     name = AudioDeviceUtils::GetDeviceSourceName(inId, Output, 0);
     assert(name.empty());
   }
 
   AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
-  if (validId(outId) && !AudioDeviceUtils::IsInput(outId)) {
+  bool validOutputIsNotInput = validId(outId) &&
+                               !AudioDeviceUtils::IsInput(outId);
+  if (validOutputIsNotInput) {
     name = AudioDeviceUtils::GetDeviceSourceName(outId, Input, 0);
     assert(name.empty());
   }
@@ -172,7 +180,9 @@ void testGetDeviceSourceNameValidParameters()
   if (validId(inId)) {
     data = AudioDeviceUtils::GetDeviceSource(inId, Input);
     name = AudioDeviceUtils::GetDeviceSourceName(inId, Input, data);
-    assert(!!data == !name.empty());
+    bool validData = !!data;
+    bool validName = !name.empty();
+    assert(validData == validName);
     cout << "input source data: " << data << ", name: " << name << endl;
     // Some USB headset(e.g., Plantronics .Audio 628) fails to get its source.
   }
@@ -184,7 +194,9 @@ void testGetDeviceSourceNameValidParameters()
   if (validId(outId)) {
     data = AudioDeviceUtils::GetDeviceSource(outId, Output);
     name = AudioDeviceUtils::GetDeviceSourceName(outId, Output, data);
-    assert(!!data == !name.empty());
+    bool validData = !!data;
+    bool validName = !name.empty();
+    assert(validData == validName);
     cout << "input source data: " << data << ", name: " << name << endl;
     // Some USB headset(e.g., Plantronics .Audio 628) fails to get its source.
   }
@@ -221,7 +233,8 @@ void testGetAllDeviceIds()
   AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
   AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
   // If we have at least one device, the device id list must not be empty.
-  assert((validId(inId) || validId(outId)) == !ids.empty());
+  bool atLeastOneDevice = validId(inId) || validId(outId);
+  assert(atLeastOneDevice == !ids.empty());
 }
 
 void testSetDefaultDeviceInvalidId()
