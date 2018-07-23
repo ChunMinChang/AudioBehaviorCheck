@@ -22,7 +22,7 @@ You can use ```$ make clean```
   - Mayube we need to find a way to fake a device and then add or remove it
 - Test some APIs that might use mutex inside AudioUnit in *test_deadlock.cpp*
   and see if they will lead to a deadlock.
-  The potential APIs are ```AudioUnitGetProperty``` and ```AudioUnitSetProperty```.
+  The candidates are ```AudioUnitGetProperty``` and ```AudioUnitSetProperty```.
 - Implement a *AudioUnitUtils* to call ```AudioUnitGetProperty``` and ```AudioUnitSetProperty``` on common things.
 - Replace ```pthread``` by ```std::thread```
 - Wrap native ```AudioObjectGetPropertyData``` to out custom GetData API
