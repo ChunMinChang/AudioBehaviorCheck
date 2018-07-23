@@ -24,7 +24,7 @@ You can use ```$ make clean```
   and see if they will lead to a deadlock.
   The candidates are ```AudioUnitGetProperty``` and ```AudioUnitSetProperty```.
 - Implement a *AudioUnitUtils* to call ```AudioUnitGetProperty``` and ```AudioUnitSetProperty``` on common things.
-- Replace ```pthread``` by ```std::thread```
+- Replace ```pthread``` by ```std::thread``` and ```pthread_mutex``` by ```std::mutex```
 - Wrap native ```AudioObjectGetPropertyData``` to a custom GetData API
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
