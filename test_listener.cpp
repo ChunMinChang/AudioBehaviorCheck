@@ -3,6 +3,7 @@
 #include <cassert>    // for assert
 #include <iostream>   // for std::cout, std::endl
 #include <pthread.h>  // for pthread_self()
+#include <unistd.h>   // for sleep()
 
 using std::cout;
 using std::endl;
@@ -16,28 +17,9 @@ string getDefaultDeviceName(AudioDeviceUtils::Scope aScope)
   return AudioDeviceUtils::GetDeviceName(id);
 }
 
-vector<AudioObjectID> getDeviceIds(AudioDeviceUtils::Scope aScope) {
-  vector<AudioObjectID> ids;
-
-  vector<AudioObjectID> all = AudioDeviceUtils::GetAllDeviceIds();
-  for (AudioObjectID id : all) {
-    if (aScope == Input) {
-      if (AudioDeviceUtils::IsInput(id)) {
-        ids.push_back(id);
-      }
-    } else {
-      if (AudioDeviceUtils::IsOutput(id)) {
-        ids.push_back(id);
-      }
-    }
-  }
-
-  return ids;
-}
-
 bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
 {
-  vector<AudioObjectID> ids = getDeviceIds(aScope);
+  vector<AudioObjectID> ids = AudioDeviceUtils::GetDeviceIds(aScope);
   if (ids.size() < 2) { // No other choice!
     return false;
   }
@@ -71,7 +53,10 @@ int main()
   cout << "Changing default input device from " << getDefaultDeviceName(Input) << endl;
   bool inputChanged = changeDefaultDevice(Input);
   if (inputChanged) {
-    while(!gDeviceChanged) {};
+    while(!gDeviceChanged) {
+      // Force to context-switch by sleeping for 100 millisecond.
+      usleep(100000);
+    };
     gDeviceChanged = false;
     cout << "to " << getDefaultDeviceName(Input) << endl;
   } else {
@@ -82,7 +67,10 @@ int main()
   assert(!gDeviceChanged);
   bool outputChanged = changeDefaultDevice(Output);
   if (outputChanged) {
-    while(!gDeviceChanged) {};
+    while(!gDeviceChanged) {
+      // Force to context-switch by sleeping for 100 millisecond.
+      usleep(100000);
+    };
     cout << "to " << getDefaultDeviceName(Output) << endl;
   } else {
     cout << endl << "Unable to change!" << endl;
