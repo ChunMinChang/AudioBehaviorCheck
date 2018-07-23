@@ -125,19 +125,20 @@ void testGetDeviceSourceNameInvalidScope()
   }
 }
 
-void testGetDeviceSourceNameInvalidData()
+void testGetDeviceSourceNameInvalidSource()
 {
   string name;
+  UInt32 source = 0; // TODO: Check if Apple states it's invalid
 
   AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
   if (validId(inId)) {
-    name = AudioDeviceUtils::GetDeviceSourceName(inId, Input, 0);
+    name = AudioDeviceUtils::GetDeviceSourceName(inId, Input, source);
     assert(name.empty());
   }
 
   AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
   if (validId(outId)) {
-    name = AudioDeviceUtils::GetDeviceSourceName(outId, Output, 0);
+    name = AudioDeviceUtils::GetDeviceSourceName(outId, Output, source);
     assert(name.empty());
   }
 }
@@ -173,7 +174,7 @@ void testGetDeviceSourceName()
 {
   testGetDeviceSourceInvalidId();
   testGetDeviceSourceNameInvalidScope();
-  testGetDeviceSourceNameInvalidData();
+  testGetDeviceSourceNameInvalidSource();
   testGetDeviceSourceNameValidParameters();
 }
 
