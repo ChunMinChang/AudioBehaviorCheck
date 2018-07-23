@@ -25,7 +25,7 @@ You can use ```$ make clean```
   The candidates are ```AudioUnitGetProperty``` and ```AudioUnitSetProperty```.
 - Implement a *AudioUnitUtils* to call ```AudioUnitGetProperty``` and ```AudioUnitSetProperty``` on common things.
 - Replace ```pthread``` by ```std::thread```
-- Wrap native ```AudioObjectGetPropertyData``` to out custom GetData API
+- Wrap native ```AudioObjectGetPropertyData``` to a custom GetData API
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
 - Splpit tests in ```test_utils.cpp``` into smaller chunks.
