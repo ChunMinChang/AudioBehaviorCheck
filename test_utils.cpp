@@ -217,6 +217,11 @@ void testGetAllDeviceIds()
   for (AudioObjectID id : ids) {
     printDeviceInfo(id);
   }
+
+  AudioObjectID inId = AudioDeviceUtils::GetDefaultDeviceId(Input);
+  AudioObjectID outId = AudioDeviceUtils::GetDefaultDeviceId(Output);
+  // If we have at least one device, the device id list must not be empty.
+  assert((validId(inId) || validId(outId)) == !ids.empty());
 }
 
 bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
