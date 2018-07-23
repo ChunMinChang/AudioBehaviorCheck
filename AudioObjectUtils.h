@@ -1,5 +1,5 @@
-#ifndef AUDIODEVICEUTILS_H
-#define AUDIODEVICEUTILS_H
+#ifndef AUDIOOBJECTUTILS_H
+#define AUDIOOBJECTUTILS_H
 
 #include <CoreAudio/CoreAudio.h>
 #include <string>
@@ -9,7 +9,7 @@ using std::vector;
 using std::string;
 
 // Provide low-level APIs to get device-related information.
-class AudioDeviceUtils
+class AudioObjectUtils
 {
 public:
   // TODO: Maybe we should move this enum out since other module may also
@@ -43,4 +43,4 @@ private:
   static UInt32 GetNumberOfStreams(AudioObjectID aId, Scope aScope);
 };
 
-#endif // #ifndef AUDIODEVICEUTILS_H
+#endif // #ifndef AUDIOOBJECTUTILS_H

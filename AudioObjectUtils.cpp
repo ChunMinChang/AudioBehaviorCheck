@@ -1,4 +1,4 @@
-#include "AudioDeviceUtils.h"
+#include "AudioObjectUtils.h"
 #include <CoreFoundation/CFString.h> // for CFStringXXX
 #include <functional> // for std::function
 
@@ -63,7 +63,7 @@ const AudioObjectPropertyAddress kOutputDeviceSourceName = {
 };
 
 /* static */ AudioObjectID
-AudioDeviceUtils::GetDefaultDeviceId(Scope aScope)
+AudioObjectUtils::GetDefaultDeviceId(Scope aScope)
 {
   AudioObjectID id;
   UInt32 size = sizeof(id);
@@ -97,7 +97,7 @@ CFStringRefToUTF8(CFStringRef aString)
 }
 
 /* static */ string
-AudioDeviceUtils::GetDeviceName(AudioObjectID aId)
+AudioObjectUtils::GetDeviceName(AudioObjectID aId)
 {
   string name;
   CFStringRef data = nullptr;
@@ -114,7 +114,7 @@ AudioDeviceUtils::GetDeviceName(AudioObjectID aId)
 }
 
 /* static */ UInt32
-AudioDeviceUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
+AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
   UInt32 data;
   UInt32 size = sizeof(data);
   const AudioObjectPropertyAddress* address = aScope == Input ?
@@ -129,7 +129,7 @@ AudioDeviceUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
 }
 
 /* static */ string
-AudioDeviceUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
+AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
                                       UInt32 aSource) {
   string name;
   CFStringRef source = nullptr;
@@ -154,7 +154,7 @@ AudioDeviceUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
 }
 
 /* static */ UInt32
-AudioDeviceUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
+AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
   UInt32 size = 0;
@@ -163,17 +163,17 @@ AudioDeviceUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
 }
 
 /* static */ bool
-AudioDeviceUtils::IsInput(AudioObjectID aId) {
+AudioObjectUtils::IsInput(AudioObjectID aId) {
   return GetNumberOfStreams(aId, Input) > 0;
 }
 
 /* static */ bool
-AudioDeviceUtils::IsOutput(AudioObjectID aId) {
+AudioObjectUtils::IsOutput(AudioObjectID aId) {
   return GetNumberOfStreams(aId, Output) > 0;
 }
 
 /* static */ vector<AudioObjectID>
-AudioDeviceUtils::GetAllDeviceIds()
+AudioObjectUtils::GetAllDeviceIds()
 {
   vector<AudioObjectID> ids;
   UInt32 size = 0;
@@ -196,10 +196,10 @@ AudioDeviceUtils::GetAllDeviceIds()
 }
 
 /* static */ vector<AudioObjectID>
-AudioDeviceUtils::GetDeviceIds(Scope aScope) {
+AudioObjectUtils::GetDeviceIds(Scope aScope) {
   vector<AudioObjectID> ids;
 
-  vector<AudioObjectID> all = AudioDeviceUtils::GetAllDeviceIds();
+  vector<AudioObjectID> all = AudioObjectUtils::GetAllDeviceIds();
   std::function<bool(AudioObjectID)> InScope = aScope == Input ?
     IsInput : IsOutput;
   for (AudioObjectID id : all) {
@@ -212,7 +212,7 @@ AudioDeviceUtils::GetDeviceIds(Scope aScope) {
 }
 
 /* static */ bool
-AudioDeviceUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
+AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
 {
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;

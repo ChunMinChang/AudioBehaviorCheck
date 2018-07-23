@@ -1,5 +1,5 @@
 #include "AudioDeviceListener.h"
-#include "AudioDeviceUtils.h"
+#include "AudioObjectUtils.h"
 #include <cassert>    // for assert
 #include <iostream>   // for std::cout, std::endl
 #include <pthread.h>  // for pthread_self()
@@ -8,23 +8,23 @@
 using std::cout;
 using std::endl;
 
-AudioDeviceUtils::Scope Input = AudioDeviceUtils::Input;
-AudioDeviceUtils::Scope Output = AudioDeviceUtils::Output;
+AudioObjectUtils::Scope Input = AudioObjectUtils::Input;
+AudioObjectUtils::Scope Output = AudioObjectUtils::Output;
 
-string getDefaultDeviceName(AudioDeviceUtils::Scope aScope)
+string getDefaultDeviceName(AudioObjectUtils::Scope aScope)
 {
-  AudioObjectID id = AudioDeviceUtils::GetDefaultDeviceId(aScope);
-  return AudioDeviceUtils::GetDeviceName(id);
+  AudioObjectID id = AudioObjectUtils::GetDefaultDeviceId(aScope);
+  return AudioObjectUtils::GetDeviceName(id);
 }
 
-bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
+bool changeDefaultDevice(AudioObjectUtils::Scope aScope)
 {
-  vector<AudioObjectID> ids = AudioDeviceUtils::GetDeviceIds(aScope);
+  vector<AudioObjectID> ids = AudioObjectUtils::GetDeviceIds(aScope);
   if (ids.size() < 2) { // No other choice!
     return false;
   }
 
-  AudioObjectID currentId = AudioDeviceUtils::GetDefaultDeviceId(aScope);
+  AudioObjectID currentId = AudioObjectUtils::GetDefaultDeviceId(aScope);
   // Get next available device.
   AudioObjectID newId;
   for (AudioObjectID id: ids) {
@@ -34,7 +34,7 @@ bool changeDefaultDevice(AudioDeviceUtils::Scope aScope)
     }
   }
 
-  return AudioDeviceUtils::SetDefaultDevice(newId, aScope);
+  return AudioObjectUtils::SetDefaultDevice(newId, aScope);
 }
 
 bool gDeviceChanged = false;

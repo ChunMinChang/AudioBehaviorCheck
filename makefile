@@ -4,7 +4,7 @@ LIBRARIES=-framework CoreAudio -framework AudioUnit -framework CoreFoundation
 
 SOURCES=AudioStream.cpp\
         AudioDeviceListener.cpp\
-        AudioDeviceUtils.cpp
+        AudioObjectUtils.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 
 TESTS=test_audio.cpp\

@@ -22,7 +22,7 @@ You can use ```$ make clean```
   - Mayube we need to find a way to fake a device and then add or remove it
 - Need to find a way to fire default-device-changed events
   - If there is more than 2 devices on input or output side,
-    we can use ```AudioDeviceUtils::SetDefaultDevice``` to change the default device.
+    we can use ```AudioObjectUtils::SetDefaultDevice``` to change the default device.
 - Test some APIs that might use mutex inside AudioUnit in *test_deadlock.cpp*
   and see if they will lead to a deadlock.
 - Replace ```pthread``` by ```std::thread```
@@ -30,8 +30,8 @@ You can use ```$ make clean```
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
 - Splpit tests in ```test_utils.cpp``` into smaller chunks.
-- Rename *AudioDeviceUtils* into *AudioDeviceInternalUtils* and
-  create an new module named *AudioDeviceUtils* to write some common used API
+- Rename *AudioObjectUtils* into *AudioDeviceInternalUtils* and
+  create an new module named *AudioObjectUtils* to write some common used API
   based on *AudioDeviceInternalUtils*.
 
 ## Tests
