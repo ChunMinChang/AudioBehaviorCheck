@@ -12,6 +12,8 @@ using std::string;
 class AudioDeviceUtils
 {
 public:
+  // TODO: Maybe we should move this enum out since other module may also
+  //       need the scope.
   enum Scope: bool {
     Input = true,
     Output = false
