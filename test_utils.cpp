@@ -210,6 +210,71 @@ void testGetDeviceSourceName()
   testGetDeviceSourceNameValidParameters();
 }
 
+void testGetDeviceLabelInvalidId()
+{
+  string label;
+
+  label = AudioObjectUtils::GetDeviceLabel(kAudioObjectUnknown, Input);
+  assert(label.empty());
+
+  label = AudioObjectUtils::GetDeviceLabel(kAudioObjectUnknown, Output);
+  assert(label.empty());
+}
+
+// TODO: The GetDeviceLabel will fall back to get device name if there is no
+//       defined source name. If the passed scope is wrong and it's the reason
+//       of getting nothing on source-name, users should know that. However, in
+//       the current implementation, we fall back to get device-name. This
+//       should be fixed!
+void testGetDeviceLabelInvalidScope()
+{
+  string label;
+
+  AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
+  if (!AudioObjectUtils::IsOutput(inId)) {
+    // TODO: After AudioObjectUtils::GetDeviceLabel is changed, we should use
+    //       assert(label.empty()) instead.
+    label = AudioObjectUtils::GetDeviceLabel(inId, Output);
+    string name = AudioObjectUtils::GetDeviceName(inId);
+    assert(label == name);
+  }
+
+  AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
+  if (!AudioObjectUtils::IsInput(outId)) {
+    // TODO: After AudioObjectUtils::GetDeviceLabel is changed, we should use
+    //       assert(label.empty()) instead.
+    label = AudioObjectUtils::GetDeviceLabel(outId, Input);
+    string name = AudioObjectUtils::GetDeviceName(outId);
+    assert(label == name);
+  }
+}
+
+void testGetDeviceLabelValidParameters()
+{
+  string label;
+
+  AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
+  label = AudioObjectUtils::GetDeviceLabel(inId, Input);
+  bool validInputId = validId(inId);
+  bool validInputLabel = !label.empty();
+  assert(validInputId == validInputLabel);
+
+  label.clear();
+
+  AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
+  label = AudioObjectUtils::GetDeviceLabel(outId, Output);
+  bool validOutputId = validId(outId);
+  bool validOutputLabel = !label.empty();
+  assert(validOutputId == validOutputLabel);
+}
+
+void testGetDeviceLabel()
+{
+  testGetDeviceLabelInvalidId();
+  testGetDeviceLabelInvalidScope();
+  testGetDeviceLabelValidParameters();
+}
+
 void printDeviceInfo(AudioObjectID aId)
 {
   string name = AudioObjectUtils::GetDeviceName(aId);
@@ -327,6 +392,7 @@ int main()
   testGetDeviceName();
   testGetDeviceSource();
   testGetDeviceSourceName();
+  testGetDeviceLabel();
   testGetAllDeviceIds();
   testSetDefaultDevice();
   return 0;

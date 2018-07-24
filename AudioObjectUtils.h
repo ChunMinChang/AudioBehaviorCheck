@@ -34,11 +34,13 @@ public:
   //       output-only devices, you need to get all the devices first ans then
   //       check if they are input or output ony by one.
   static vector<AudioObjectID> GetAllDeviceIds();
-  // TODO: Consider if we should move this API to other module since it's
-  //       rather higher level, that depends on the above low level APIs.
-  //       When we write unit test for this API, it works only when its base
-  //       APIs works. However, the API users should not know this dependence.
+  // TODO: Consider if we should move following APIs to other module since they
+  //       are rather higher level, that depends on the above low level APIs.
+  //       When we write unit tests for these APIs, they work only when their
+  //       base APIs work. However, the API users shouldn't know these
+  //       dependences.
   static vector<AudioObjectID> GetDeviceIds(Scope aScope);
+  static string GetDeviceLabel(AudioObjectID aId, Scope aScope);
 private:
   static UInt32 GetNumberOfStreams(AudioObjectID aId, Scope aScope);
 };
