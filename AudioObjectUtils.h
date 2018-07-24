@@ -23,8 +23,7 @@ public:
   static UInt32 GetDeviceSource(AudioObjectID aId, Scope aScope);
   static string GetDeviceSourceName(AudioObjectID aId, Scope aScope,
                                     UInt32 aSource);
-  static bool IsInput(AudioObjectID aId);
-  static bool IsOutput(AudioObjectID aId);
+  static bool IsInScope(AudioObjectID aId, Scope aScope);
   // TODO: Validate the AudioObjectID and scope by ourselves since the
   //       underlying native API always return noErr. See comment in its
   //       implementation.

@@ -163,13 +163,8 @@ AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
 }
 
 /* static */ bool
-AudioObjectUtils::IsInput(AudioObjectID aId) {
-  return GetNumberOfStreams(aId, Input) > 0;
-}
-
-/* static */ bool
-AudioObjectUtils::IsOutput(AudioObjectID aId) {
-  return GetNumberOfStreams(aId, Output) > 0;
+AudioObjectUtils::IsInScope(AudioObjectID aId, Scope aScope) {
+  return GetNumberOfStreams(aId, aScope) > 0;
 }
 
 /* static */ vector<AudioObjectID>
@@ -200,10 +195,8 @@ AudioObjectUtils::GetDeviceIds(Scope aScope) {
   vector<AudioObjectID> ids;
 
   vector<AudioObjectID> all = AudioObjectUtils::GetAllDeviceIds();
-  std::function<bool(AudioObjectID)> InScope = aScope == Input ?
-    IsInput : IsOutput;
   for (AudioObjectID id : all) {
-    if (InScope(id)) {
+    if (IsInScope(id, aScope)) {
       ids.push_back(id);
     }
   }
