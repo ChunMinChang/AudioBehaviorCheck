@@ -50,13 +50,13 @@ const AudioObjectPropertyAddress kOutputDeviceSourcePropertyAddress = {
   kAudioObjectPropertyElementMaster
 };
 
-const AudioObjectPropertyAddress kInputDeviceSourceName = {
+const AudioObjectPropertyAddress kInputDeviceSourceNamePropertyAddress = {
   kAudioDevicePropertyDataSourceNameForIDCFString,
   kAudioObjectPropertyScopeInput,
   kAudioObjectPropertyElementMaster
 };
 
-const AudioObjectPropertyAddress kOutputDeviceSourceName = {
+const AudioObjectPropertyAddress kOutputDeviceSourceNamePropertyAddress = {
   kAudioDevicePropertyDataSourceNameForIDCFString,
   kAudioObjectPropertyScopeOutput,
   kAudioObjectPropertyElementMaster
@@ -154,8 +154,9 @@ AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
   translation.mOutputDataSize = sizeof(source);
 
   UInt32 size = sizeof(translation);
-  const AudioObjectPropertyAddress* address = aScope == Input ?
-    &kInputDeviceSourceName : &kOutputDeviceSourceName;
+  const AudioObjectPropertyAddress* address = aScope == Input
+    ? &kInputDeviceSourceNamePropertyAddress
+    : &kOutputDeviceSourceNamePropertyAddress;
   OSStatus r = AudioObjectGetPropertyData(aId, address, 0, nullptr, &size,
                                           &translation);
   if (r != noErr) {
