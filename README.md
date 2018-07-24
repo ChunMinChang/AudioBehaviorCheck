@@ -29,7 +29,7 @@ You can use ```$ make clean```
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
 - Split tests into smaller chunks.
-- Split *AudioObjectUtils* into a *internal* one and a *exposed* one maybe since some APIs are in differen layers.
+- Split *AudioObjectUtils* into a *internal* one and a *exposed* one maybe since some APIs are in differen levels.
 
 ## Tests
 
