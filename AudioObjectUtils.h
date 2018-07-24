@@ -19,11 +19,11 @@ public:
     Output = false
   };
   static AudioObjectID GetDefaultDeviceId(Scope aScope);
+  static bool IsInScope(AudioObjectID aId, Scope aScope);
   static string GetDeviceName(AudioObjectID aId);
   static UInt32 GetDeviceSource(AudioObjectID aId, Scope aScope);
   static string GetDeviceSourceName(AudioObjectID aId, Scope aScope,
                                     UInt32 aSource);
-  static bool IsInScope(AudioObjectID aId, Scope aScope);
   // TODO: Validate the AudioObjectID and scope by ourselves since the
   //       underlying native API always return noErr. See comment in its
   //       implementation.
@@ -40,8 +40,10 @@ public:
   //       dependences.
   static vector<AudioObjectID> GetDeviceIds(Scope aScope);
   static string GetDeviceLabel(AudioObjectID aId, Scope aScope);
+
 private:
   static UInt32 GetNumberOfStreams(AudioObjectID aId, Scope aScope);
+  static string CFStringRefToUTF8(CFStringRef aString);
 };
 
 #endif // #ifndef AUDIOOBJECTUTILS_H

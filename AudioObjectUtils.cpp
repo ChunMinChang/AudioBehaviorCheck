@@ -74,8 +74,22 @@ AudioObjectUtils::GetDefaultDeviceId(Scope aScope)
   return r == noErr ? id : kAudioObjectUnknown;
 }
 
-static string
-CFStringRefToUTF8(CFStringRef aString)
+/* static */ UInt32
+AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
+  const AudioObjectPropertyAddress* address = aScope == Input ?
+    &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
+  UInt32 size = 0;
+  OSStatus r = AudioObjectGetPropertyDataSize(aId, address, 0, nullptr, &size);
+  return r == noErr ? static_cast<UInt32>(size / sizeof(AudioStreamID)) : 0;
+}
+
+/* static */ bool
+AudioObjectUtils::IsInScope(AudioObjectID aId, Scope aScope) {
+  return GetNumberOfStreams(aId, aScope) > 0;
+}
+
+/* static */ string
+AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
 {
   string s;
   if (!aString) {
@@ -153,18 +167,17 @@ AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
   return name;
 }
 
-/* static */ UInt32
-AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
-  const AudioObjectPropertyAddress* address = aScope == Input ?
-    &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
-  UInt32 size = 0;
-  OSStatus r = AudioObjectGetPropertyDataSize(aId, address, 0, nullptr, &size);
-  return r == noErr ? static_cast<UInt32>(size / sizeof(AudioStreamID)) : 0;
-}
-
 /* static */ bool
-AudioObjectUtils::IsInScope(AudioObjectID aId, Scope aScope) {
-  return GetNumberOfStreams(aId, aScope) > 0;
+AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
+{
+  const AudioObjectPropertyAddress* address = aScope == Input ?
+    &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
+  // TODO: This API returns noErr almost in any case. It returns noErr if
+  //       aId is kAudioObjectUnknown. It returns noErr even if we set
+  //       a non-input/non-output device to the default input/output device.
+  //       It works weirdly. It's better to check the aId by ourselves.
+  return AudioObjectSetPropertyData(kAudioObjectSystemObject, address,
+                                    0, nullptr, sizeof(aId), &aId) == noErr;
 }
 
 /* static */ vector<AudioObjectID>
@@ -217,18 +230,4 @@ AudioObjectUtils::GetDeviceLabel(AudioObjectID aId, Scope aScope)
     label = GetDeviceName(aId);
   }
   return label;
-}
-
-
-/* static */ bool
-AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
-{
-  const AudioObjectPropertyAddress* address = aScope == Input ?
-    &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
-  // TODO: This API returns noErr almost in any case. It returns noErr if
-  //       aId is kAudioObjectUnknown. It returns noErr even if we set
-  //       a non-input/non-output device to the default input/output device.
-  //       It works weirdly. It's better to check the aId by ourselves.
-  return AudioObjectSetPropertyData(kAudioObjectSystemObject, address,
-                                    0, nullptr, sizeof(aId), &aId) == noErr;
 }
