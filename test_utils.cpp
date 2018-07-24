@@ -271,15 +271,19 @@ void testGetDeviceLabel()
 
 void printDeviceInfo(AudioObjectID aId)
 {
-  string name = AudioObjectUtils::GetDeviceName(aId);
-  cout << "Device " << aId << " : " << name << " >";
-  if (AudioObjectUtils::IsInScope(aId, Input)) {
-    cout << " input";
+  cout << "Device " << aId << ": ";
+  string info;
+  for (auto scope : { Input, Output }) {
+    if (!AudioObjectUtils::IsInScope(aId, scope)) {
+      continue;
+    }
+    AudioObjectID defaultId = AudioObjectUtils::GetDefaultDeviceId(scope);
+    info += info.empty() ? "" : ", ";
+    info += aId == defaultId ? "(default " : "(";
+    info += scope == Input ? "input) " : "output) ";
+    info += AudioObjectUtils::GetDeviceLabel(aId, scope);
   }
-  if (AudioObjectUtils::IsInScope(aId, Output)) {
-    cout << " output";
-  }
-  cout << endl;
+  cout << info << endl;
 }
 
 void testGetAllDeviceIds()
