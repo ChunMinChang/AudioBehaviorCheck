@@ -53,7 +53,7 @@ void testGetDeviceName()
   assert(validId(id) == !AudioObjectUtils::GetDeviceName(id).empty());
 }
 
-void testGetDeviceSourceInvalidId()
+void testGetDeviceSourceWithInvalidId()
 {
   UInt32 data = 0;
 
@@ -64,7 +64,7 @@ void testGetDeviceSourceInvalidId()
   assert(!data);
 }
 
-void testGetDeviceSourceInvalidScope()
+void testGetDeviceSourceWithInvalidScope()
 {
   UInt32 data = 0;
 
@@ -85,7 +85,7 @@ void testGetDeviceSourceInvalidScope()
   }
 }
 
-void testGetDeviceSourceValidParameters()
+void testGetDeviceSourceWithValidParameters()
 {
   UInt32 data = 0;
 
@@ -108,13 +108,13 @@ void testGetDeviceSourceValidParameters()
 
 void testGetDeviceSource()
 {
-  testGetDeviceSourceInvalidId();
-  testGetDeviceSourceInvalidScope();
-  testGetDeviceSourceValidParameters();
+  testGetDeviceSourceWithInvalidId();
+  testGetDeviceSourceWithInvalidScope();
+  testGetDeviceSourceWithValidParameters();
 }
 
 // TODO: What if data is valid?
-void testGetDeviceSourceNameInvalidId()
+void testGetDeviceSourceNameWithInvalidId()
 {
   string name;
 
@@ -126,7 +126,7 @@ void testGetDeviceSourceNameInvalidId()
 }
 
 // TODO: What if data is valid?
-void testGetDeviceSourceNameInvalidScope()
+void testGetDeviceSourceNameWithInvalidScope()
 {
   string name;
 
@@ -147,7 +147,7 @@ void testGetDeviceSourceNameInvalidScope()
   }
 }
 
-void testGetDeviceSourceNameInvalidSource()
+void testGetDeviceSourceNameWithInvalidSource()
 {
   string name;
   UInt32 source = 0; // TODO: Check if Apple states it's invalid
@@ -165,7 +165,7 @@ void testGetDeviceSourceNameInvalidSource()
   }
 }
 
-void testGetDeviceSourceNameValidParameters()
+void testGetDeviceSourceNameWithValidParameters()
 {
   UInt32 data = 0;
   string name;
@@ -198,13 +198,13 @@ void testGetDeviceSourceNameValidParameters()
 
 void testGetDeviceSourceName()
 {
-  testGetDeviceSourceInvalidId();
-  testGetDeviceSourceNameInvalidScope();
-  testGetDeviceSourceNameInvalidSource();
-  testGetDeviceSourceNameValidParameters();
+  testGetDeviceSourceNameWithInvalidId();
+  testGetDeviceSourceNameWithInvalidScope();
+  testGetDeviceSourceNameWithInvalidSource();
+  testGetDeviceSourceNameWithValidParameters();
 }
 
-void testGetDeviceLabelInvalidId()
+void testGetDeviceLabelWithInvalidId()
 {
   string label;
 
@@ -220,7 +220,7 @@ void testGetDeviceLabelInvalidId()
 //       of getting nothing on source-name, users should know that. However, in
 //       the current implementation, we fall back to get device-name. This
 //       should be fixed!
-void testGetDeviceLabelInvalidScope()
+void testGetDeviceLabelWithInvalidScope()
 {
   string label;
 
@@ -243,7 +243,7 @@ void testGetDeviceLabelInvalidScope()
   }
 }
 
-void testGetDeviceLabelValidParameters()
+void testGetDeviceLabelWithValidParameters()
 {
   string label;
 
@@ -264,9 +264,9 @@ void testGetDeviceLabelValidParameters()
 
 void testGetDeviceLabel()
 {
-  testGetDeviceLabelInvalidId();
-  testGetDeviceLabelInvalidScope();
-  testGetDeviceLabelValidParameters();
+  testGetDeviceLabelWithInvalidId();
+  testGetDeviceLabelWithInvalidScope();
+  testGetDeviceLabelWithValidParameters();
 }
 
 void printDeviceInfo(AudioObjectID aId)
@@ -300,7 +300,7 @@ void testGetAllDeviceIds()
   assert(atLeastOneDevice == !ids.empty());
 }
 
-void testSetDefaultDeviceInvalidId()
+void testSetDefaultDeviceWithInvalidId()
 {
   // Surprisingly it's ok to set default input device to a unknown device
   // in apple's API. The system do nothing in this case.
@@ -311,7 +311,7 @@ void testSetDefaultDeviceInvalidId()
   assert(AudioObjectUtils::SetDefaultDevice(kAudioObjectUnknown, Output));
 }
 
-void testSetDefaultDeviceSameDefaultDevice()
+void testSetDefaultDeviceWithSameDefaultDevice()
 {
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
   if (validId(inId)) {
@@ -326,7 +326,7 @@ void testSetDefaultDeviceSameDefaultDevice()
   }
 }
 
-void testSetDefaultDeviceInvalidScope()
+void testSetDefaultDeviceWithInvalidScope()
 {
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
   if (validId(inId) && !AudioObjectUtils::IsInScope(inId, Output)) {
@@ -361,7 +361,7 @@ bool changeDefaultDevice(AudioObjectUtils::Scope aScope)
   return AudioObjectUtils::SetDefaultDevice(newId, aScope);
 }
 
-void testSetDefaultDeviceValidParameters()
+void testSetDefaultDeviceWithValidParameters()
 {
   // It's ok to change the default input device if there are more than 1
   // input devices. Otherwise, it's failed to do that.
@@ -376,10 +376,10 @@ void testSetDefaultDeviceValidParameters()
 
 void testSetDefaultDevice()
 {
-  testSetDefaultDeviceInvalidId();
-  testSetDefaultDeviceSameDefaultDevice();
-  testSetDefaultDeviceInvalidScope();
-  testSetDefaultDeviceValidParameters();
+  testSetDefaultDeviceWithInvalidId();
+  testSetDefaultDeviceWithSameDefaultDevice();
+  testSetDefaultDeviceWithInvalidScope();
+  testSetDefaultDeviceWithValidParameters();
 }
 
 int main()
