@@ -38,7 +38,7 @@ public:
   //       rather higher level, that depends on the above low level APIs.
   //       When we write unit test for this API, it works only when its base
   //       APIs works. However, the API users should not know this dependence.
-  static  vector<AudioObjectID> GetDeviceIds(Scope aScope);
+  static vector<AudioObjectID> GetDeviceIds(Scope aScope);
 private:
   static UInt32 GetNumberOfStreams(AudioObjectID aId, Scope aScope);
 };
