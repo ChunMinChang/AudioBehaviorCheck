@@ -131,7 +131,7 @@ AudioObjectUtils::GetDeviceName(AudioObjectID aId)
 
 /* static */ UInt32
 AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
-  UInt32 data;
+  UInt32 data = 0;
   UInt32 size = sizeof(data);
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kInputDeviceSourcePropertyAddress : &kOutputDeviceSourcePropertyAddress;
