@@ -64,13 +64,16 @@ const AudioObjectPropertyAddress kOutputDeviceSourceNamePropertyAddress = {
 /* static */ AudioObjectID
 AudioObjectUtils::GetDefaultDeviceId(Scope aScope)
 {
-  AudioObjectID id;
+  AudioObjectID id = kAudioObjectUnknown;
   UInt32 size = sizeof(id);
   const AudioObjectPropertyAddress* address = aScope == Input?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
   OSStatus r = AudioObjectGetPropertyData(kAudioObjectSystemObject, address,
-                                          0, 0, &size, &id);
-  return r == noErr ? id : kAudioObjectUnknown;
+                                          0, nullptr, &size, &id);
+  if (r != noErr) {
+    return kAudioObjectUnknown; // TODO: Maybe throw an error instead.
+  }
+  return id;
 }
 
 /* static */ UInt32
