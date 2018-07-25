@@ -1,6 +1,5 @@
 #include "AudioObjectUtils.h"
 #include <CoreFoundation/CFString.h> // for CFStringXXX
-#include <functional> // for std::function
 
 const AudioObjectPropertyAddress kDevicesPropertyAddress = {
   kAudioHardwarePropertyDevices,
