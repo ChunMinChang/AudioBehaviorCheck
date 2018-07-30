@@ -44,6 +44,33 @@ public:
 private:
   static UInt32 GetNumberOfStreams(AudioObjectID aId, Scope aScope);
   static string CFStringRefToUTF8(CFStringRef aString);
+
+  template<typename T>
+  static OSStatus GetPropertyData(AudioObjectID aId,
+                                  const AudioObjectPropertyAddress* address,
+                                  T* data,
+                                  UInt32 size = 0) {
+    if (!size) {
+      size = sizeof(T);
+    }
+    return AudioObjectGetPropertyData(aId, address, 0, nullptr, &size,
+                                      static_cast<void*>(data));
+  }
+
+  static OSStatus GetPropertyDataSize(AudioObjectID aId,
+                                      const AudioObjectPropertyAddress* address,
+                                      UInt32 *size) {
+    return AudioObjectGetPropertyDataSize(aId, address, 0, nullptr, size);
+  }
+
+  template<typename T>
+  static OSStatus SetPropertyData(AudioObjectID aId,
+                                  const AudioObjectPropertyAddress *address,
+                                  UInt32 size,
+                                  const T* data) {
+    return AudioObjectSetPropertyData(aId, address, 0, nullptr, sizeof(T),
+                                      static_cast<const void*>(data));
+  }
 };
 
 #endif // #ifndef AUDIOOBJECTUTILS_H
