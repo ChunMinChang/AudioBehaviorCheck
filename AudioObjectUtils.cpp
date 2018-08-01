@@ -68,7 +68,7 @@ AudioObjectUtils::GetDefaultDeviceId(Scope aScope)
   const AudioObjectPropertyAddress* address = aScope == Input?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
   OSStatus r = GetPropertyData(kAudioObjectSystemObject, address, &id);
-  if (r != noErr) {
+  if (r != kAudioHardwareNoError) {
     return kAudioObjectUnknown; // TODO: Maybe throw an error instead.
   }
   return id;
@@ -80,7 +80,8 @@ AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
     &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
   UInt32 size = 0;
   OSStatus r = GetPropertyDataSize(aId, address, &size);
-  return r == noErr ? static_cast<UInt32>(size / sizeof(AudioStreamID)) : 0;
+  return r == kAudioHardwareNoError ?
+    static_cast<UInt32>(size / sizeof(AudioStreamID)) : 0;
 }
 
 /* static */ bool
@@ -116,7 +117,7 @@ AudioObjectUtils::GetDeviceName(AudioObjectID aId)
   string name;
   CFStringRef data = nullptr;
   OSStatus r = GetPropertyData(aId, &kDeviceNamePropertyAddress, &data);
-  if (r != noErr || !data) {
+  if (r != kAudioHardwareNoError || !data) {
     return name; // TODO: Maybe throw an error instead.
   }
 
@@ -131,7 +132,7 @@ AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kInputDeviceSourcePropertyAddress : &kOutputDeviceSourcePropertyAddress;
   OSStatus r = GetPropertyData(aId, address, &data);
-  if (r != noErr) {
+  if (r != kAudioHardwareNoError) {
     return 0; // TODO: Maybe throw an error instead.
   }
 
@@ -153,7 +154,7 @@ AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
     ? &kInputDeviceSourceNamePropertyAddress
     : &kOutputDeviceSourceNamePropertyAddress;
   OSStatus r = GetPropertyData(aId, address, &translation);
-  if (r != noErr) {
+  if (r != kAudioHardwareNoError) {
     return name; // TODO: Maybe throw an error instead.
   }
 
@@ -167,12 +168,12 @@ AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
 {
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
-  // TODO: This API returns noErr almost in any case. It returns noErr if
-  //       aId is kAudioObjectUnknown. It returns noErr even if we set
+  // TODO: This API returns kAudioHardwareNoError almost in any case. It returns kAudioHardwareNoError if
+  //       aId is kAudioObjectUnknown. It returns kAudioHardwareNoError even if we set
   //       a non-input/non-output device to the default input/output device.
   //       It works weirdly. It's better to check the aId by ourselves.
   return SetPropertyData(kAudioObjectSystemObject, address, sizeof(aId), &aId)
-         == noErr;
+         == kAudioHardwareNoError;
 }
 
 /* static */ vector<AudioObjectID>
@@ -182,14 +183,14 @@ AudioObjectUtils::GetAllDeviceIds()
   UInt32 size = 0;
   const AudioObjectPropertyAddress* address = &kDevicesPropertyAddress;
   OSStatus r = GetPropertyDataSize(kAudioObjectSystemObject, address, &size);
-  if (r != noErr) {
+  if (r != kAudioHardwareNoError) {
     return ids;
   }
 
   UInt32 numbers = static_cast<UInt32>(size / sizeof(AudioObjectID));
   ids.resize(numbers);
   r = GetPropertyData(kAudioObjectSystemObject, address, ids.data(), size);
-  if (r != noErr) {
+  if (r != kAudioHardwareNoError) {
     return ids;
   }
 
