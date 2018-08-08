@@ -48,13 +48,29 @@ private:
   template<typename T>
   static OSStatus GetPropertyData(AudioObjectID aId,
                                   const AudioObjectPropertyAddress* address,
-                                  T* data,
-                                  UInt32 size = 0) {
-    if (!size) {
-      size = sizeof(T);
-    }
+                                  T* data) {
+    UInt32 size = sizeof(T);
     return AudioObjectGetPropertyData(aId, address, 0, nullptr, &size,
                                       static_cast<void*>(data));
+  }
+
+  template<typename T>
+  static OSStatus GetPropertyArray(AudioObjectID aId,
+                                   const AudioObjectPropertyAddress* address,
+                                   vector<T>* array) {
+    UInt32 size = 0;
+    OSStatus r = GetPropertyDataSize(aId, address, &size);
+    if (r != kAudioHardwareNoError) {
+      return r;
+    }
+    // TDDO: what if size is 0 ?
+    vector<T> data(size / sizeof(T));
+    r = AudioObjectGetPropertyData(aId, address, 0, nullptr, &size,
+                                   static_cast<void*>(data.data()));
+    if (r == kAudioHardwareNoError) {
+      *array = data;
+    }
+    return r;
   }
 
   static OSStatus GetPropertyDataSize(AudioObjectID aId,
@@ -66,7 +82,6 @@ private:
   template<typename T>
   static OSStatus SetPropertyData(AudioObjectID aId,
                                   const AudioObjectPropertyAddress *address,
-                                  UInt32 size,
                                   const T* data) {
     return AudioObjectSetPropertyData(aId, address, 0, nullptr, sizeof(T),
                                       static_cast<const void*>(data));

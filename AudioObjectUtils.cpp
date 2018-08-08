@@ -176,7 +176,7 @@ AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
   //       aId is kAudioObjectUnknown. It returns kAudioHardwareNoError even if we set
   //       a non-input/non-output device to the default input/output device.
   //       It works weirdly. It's better to check the aId by ourselves.
-  return SetPropertyData(kAudioObjectSystemObject, address, sizeof(aId), &aId)
+  return SetPropertyData(kAudioObjectSystemObject, address, &aId)
          == kAudioHardwareNoError;
 }
 
@@ -184,18 +184,9 @@ AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
 AudioObjectUtils::GetAllDeviceIds()
 {
   vector<AudioObjectID> ids;
-  UInt32 size = 0;
-  const AudioObjectPropertyAddress* address = &kDevicesPropertyAddress;
-  OSStatus r = GetPropertyDataSize(kAudioObjectSystemObject, address, &size);
+  OSStatus r = GetPropertyArray(kAudioObjectSystemObject, &kDevicesPropertyAddress, &ids);
   if (r != kAudioHardwareNoError) {
-    return ids;
-  }
-
-  UInt32 numbers = static_cast<UInt32>(size / sizeof(AudioObjectID));
-  ids.resize(numbers);
-  r = GetPropertyData(kAudioObjectSystemObject, address, ids.data(), size);
-  if (r != kAudioHardwareNoError) {
-    return ids;
+    return {};
   }
 
   return ids;
