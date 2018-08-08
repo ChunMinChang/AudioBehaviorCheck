@@ -75,7 +75,8 @@ AudioObjectUtils::GetDefaultDeviceId(Scope aScope)
 }
 
 /* static */ UInt32
-AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
+AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope)
+{
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
   UInt32 size = 0;
@@ -85,7 +86,8 @@ AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope) {
 }
 
 /* static */ bool
-AudioObjectUtils::IsInScope(AudioObjectID aId, Scope aScope) {
+AudioObjectUtils::IsInScope(AudioObjectID aId, Scope aScope)
+{
   return GetNumberOfStreams(aId, aScope) > 0;
 }
 
@@ -127,7 +129,8 @@ AudioObjectUtils::GetDeviceName(AudioObjectID aId)
 }
 
 /* static */ UInt32
-AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
+AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope)
+{
   UInt32 data = 0;
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kInputDeviceSourcePropertyAddress : &kOutputDeviceSourcePropertyAddress;
@@ -141,7 +144,8 @@ AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope) {
 
 /* static */ string
 AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
-                                      UInt32 aSource) {
+                                      UInt32 aSource)
+{
   string name;
   CFStringRef source = nullptr;
   AudioValueTranslation translation;
