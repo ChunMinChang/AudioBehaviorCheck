@@ -63,7 +63,9 @@ private:
     if (r != kAudioHardwareNoError) {
       return r;
     }
-    // TDDO: what if size is 0 ?
+    if (!size) {
+      return r; // TODO: Maybe throw an error instead.
+    }
     vector<T> data(size / sizeof(T));
     r = AudioObjectGetPropertyData(aId, address, 0, nullptr, &size,
                                    static_cast<void*>(data.data()));
