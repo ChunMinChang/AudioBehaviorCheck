@@ -103,12 +103,11 @@ AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
   CFIndex size = CFStringGetMaximumSizeForEncoding(length,
                                                    kCFStringEncodingUTF8) + 1;
   char* buffer = new char[size];
-  if (!CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
-    delete [] buffer;
-    return s;
+  if (CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
+    s = string(buffer);
   }
 
-  s = string(buffer);
+  CFRelease(aString);
   delete [] buffer;
   return s;
 }
@@ -116,16 +115,13 @@ AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
 /* static */ string
 AudioObjectUtils::GetDeviceName(AudioObjectID aId)
 {
-  string name;
   CFStringRef data = nullptr;
   OSStatus status = GetPropertyData(aId, &kDeviceNamePropertyAddress, &data);
   if (status != kAudioHardwareNoError || !data) {
-    return name; // TODO: Maybe throw an error instead.
+    return ""; // TODO: Maybe throw an error instead.
   }
 
-  name = CFStringRefToUTF8(data);
-  CFRelease(data);
-  return name;
+  return CFStringRefToUTF8(data);
 }
 
 /* static */ UInt32
@@ -146,7 +142,6 @@ AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope)
 AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
                                       UInt32 aSource)
 {
-  string name;
   CFStringRef source = nullptr;
   AudioValueTranslation translation;
   translation.mInputData = &aSource;
@@ -159,12 +154,10 @@ AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
     : &kOutputDeviceSourceNamePropertyAddress;
   OSStatus status = GetPropertyData(aId, address, &translation);
   if (status != kAudioHardwareNoError) {
-    return name; // TODO: Maybe throw an error instead.
+    return ""; // TODO: Maybe throw an error instead.
   }
 
-  name = CFStringRefToUTF8(source);
-  CFRelease(source);
-  return name;
+  return CFStringRefToUTF8(source);
 }
 
 /* static */ bool
