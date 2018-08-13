@@ -91,6 +91,26 @@ AudioObjectUtils::IsInScope(AudioObjectID aId, Scope aScope)
   return GetNumberOfStreams(aId, aScope) > 0;
 }
 
+// /* static */ string
+// AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
+// {
+//   string s;
+//   if (!aString) {
+//     return s;
+//   }
+
+//   CFIndex length = CFStringGetLength(aString);
+//   CFIndex size = CFStringGetMaximumSizeForEncoding(length,
+//                                                    kCFStringEncodingUTF8) + 1;
+//   char* buffer = new char[size];
+//   if (CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
+//     s = string(buffer);
+//   }
+
+//   delete [] buffer;
+//   return s;
+// }
+
 /* static */ string
 AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
 {
@@ -100,16 +120,41 @@ AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
   }
 
   CFIndex length = CFStringGetLength(aString);
-  CFIndex size = CFStringGetMaximumSizeForEncoding(length,
-                                                   kCFStringEncodingUTF8) + 1;
-  char* buffer = new char[size];
-  if (CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
-    s = string(buffer);
+  if (!length) {
+    return s;
   }
 
-  CFRelease(aString);
-  delete [] buffer;
-  return s;
+  CFRange stringRange = CFRangeMake(0, length);
+  CFIndex size = 0;
+  CFIndex converted = CFStringGetBytes(aString,
+                                       stringRange,
+                                       kCFStringEncodingUTF8,
+                                       0,       // lossByte
+                                       false,   // isExternalRepresentation
+                                       nullptr, // buffer
+                                       0,       // maxBufLen
+                                       &size);
+  if (!converted || !size) {
+    return s;
+  }
+
+  size_t elements = size + 1; // + 1 for a NUL terminator.
+  vector<char> buffer(elements);
+
+  converted = CFStringGetBytes(aString,
+                               stringRange,
+                               kCFStringEncodingUTF8,
+                               0,      // lossByte
+                               false,  // isExternalRepresentation
+                               reinterpret_cast<UInt8*>(buffer.data()),
+                               size,
+                               nullptr);
+  if (!converted) {
+    return s;
+  }
+
+  buffer[elements - 1] = '\0';
+  return string(buffer.data(), elements - 1);
 }
 
 /* static */ string
@@ -121,7 +166,9 @@ AudioObjectUtils::GetDeviceName(AudioObjectID aId)
     return ""; // TODO: Maybe throw an error instead.
   }
 
-  return CFStringRefToUTF8(data);
+  string s = CFStringRefToUTF8(data);
+  CFRelease(data);
+  return s;
 }
 
 /* static */ UInt32
