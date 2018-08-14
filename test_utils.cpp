@@ -28,12 +28,15 @@ void testGetDefaultDeviceId()
   cout << "default output device: " << outId;
 }
 
-void testIsInScope()
+void testIsInScopeWithInvalidId()
 {
   // Return false for invalid ids.
   assert(!AudioObjectUtils::IsInScope(kAudioObjectUnknown, Input));
   assert(!AudioObjectUtils::IsInScope(kAudioObjectUnknown, Output));
+}
 
+void testIsInScopeWithValidParameters()
+{
   // Return true if we have valid ids.
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
   assert(validId(inId) == AudioObjectUtils::IsInScope(inId, Input));
@@ -42,15 +45,30 @@ void testIsInScope()
   assert(validId(outId) == AudioObjectUtils::IsInScope(outId, Output));
 }
 
-void testGetDeviceName()
+void testIsInScope()
+{
+  testIsInScopeWithInvalidId();
+  testIsInScopeWithValidParameters();
+}
+
+void testGetDeviceNameWithInvalidId()
 {
   // Return empty string if it's a inavlid id.
   string unknown = AudioObjectUtils::GetDeviceName(kAudioObjectUnknown);
   assert(unknown.empty());
+}
 
+void testGetDeviceNameWithValidParameters()
+{
   // Return an non-empty string if it's a valid id.
   AudioObjectID id = AudioObjectUtils::GetDefaultDeviceId(Output);
   assert(validId(id) == !AudioObjectUtils::GetDeviceName(id).empty());
+}
+
+void testGetDeviceName()
+{
+  testGetDeviceNameWithInvalidId();
+  testGetDeviceNameWithValidParameters();
 }
 
 void testGetDeviceSourceWithInvalidId()
