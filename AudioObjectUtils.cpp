@@ -258,12 +258,13 @@ AudioObjectUtils::GetDeviceIds(Scope aScope) {
 /* static */ string
 AudioObjectUtils::GetDeviceLabel(AudioObjectID aId, Scope aScope)
 {
+  string label;
+  if (!IsInScope(aId, aScope)) {
+    return label;
+  }
+
   UInt32 source = GetDeviceSource(aId, aScope);
-  string label = GetDeviceSourceName(aId, aScope, source);
-  // TODO: We will return device name when the scope is wrong and that's weird.
-  //       We should notice users the scope is wrong. If GetDeviceSourceName()
-  //       can detect scope and throw an error in this case, it will be easier
-  //       to handle this.
+  label = GetDeviceSourceName(aId, aScope, source);
   if (label.empty()) {
     label = GetDeviceName(aId);
   }

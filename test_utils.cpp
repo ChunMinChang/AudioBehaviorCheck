@@ -231,31 +231,20 @@ void testGetDeviceLabelWithInvalidId()
   assert(label.empty());
 }
 
-// TODO: The GetDeviceLabel will fall back to get device name if there is no
-//       defined source name. If the passed scope is wrong and it's the reason
-//       of getting nothing on source-name, users should know that. However, in
-//       the current implementation, we fall back to get device-name. This
-//       should be fixed!
 void testGetDeviceLabelWithInvalidScope()
 {
   string label;
 
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
   if (!AudioObjectUtils::IsInScope(inId, Output)) {
-    // TODO: After AudioObjectUtils::GetDeviceLabel is changed, we should use
-    //       assert(label.empty()) instead.
     label = AudioObjectUtils::GetDeviceLabel(inId, Output);
-    string name = AudioObjectUtils::GetDeviceName(inId);
-    assert(label == name);
+    assert(label.empty());
   }
 
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
   if (!AudioObjectUtils::IsInScope(outId, Input)) {
-    // TODO: After AudioObjectUtils::GetDeviceLabel is changed, we should use
-    //       assert(label.empty()) instead.
     label = AudioObjectUtils::GetDeviceLabel(outId, Input);
-    string name = AudioObjectUtils::GetDeviceName(outId);
-    assert(label == name);
+    assert(label.empty());
   }
 }
 
