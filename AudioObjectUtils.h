@@ -18,6 +18,8 @@ public:
     Input = true,
     Output = false
   };
+  // NOTE: When there is no valid device, the underlying API will return
+  //       kAudioObjectUnknown.
   static AudioObjectID GetDefaultDeviceId(Scope aScope);
   static bool IsInScope(AudioObjectID aId, Scope aScope);
   static string GetDeviceName(AudioObjectID aId);
