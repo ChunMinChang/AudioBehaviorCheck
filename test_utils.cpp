@@ -318,27 +318,20 @@ void testGetAllDeviceIds()
 
 void testSetDefaultDeviceWithInvalidId()
 {
-  // Surprisingly it's ok to set default input device to a unknown device
-  // in apple's API. The system do nothing in this case.
-  assert(AudioObjectUtils::SetDefaultDevice(kAudioObjectUnknown, Input));
-
-  // Surprisingly it's ok to set default output device to a unknown device
-  // in apple's API. The system do nothing in this case.
-  assert(AudioObjectUtils::SetDefaultDevice(kAudioObjectUnknown, Output));
+  assert(!AudioObjectUtils::SetDefaultDevice(kAudioObjectUnknown, Input));
+  assert(!AudioObjectUtils::SetDefaultDevice(kAudioObjectUnknown, Output));
 }
 
 void testSetDefaultDeviceWithSameDefaultDevice()
 {
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
   if (validId(inId)) {
-    // It's ok to set current default input device to default input device again.
-    assert(AudioObjectUtils::SetDefaultDevice(inId, Input));
+    assert(!AudioObjectUtils::SetDefaultDevice(inId, Input));
   }
 
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
   if (validId(outId)) {
-    // It's ok to set current default output device to default input device again.
-    assert(AudioObjectUtils::SetDefaultDevice(outId, Output));
+    assert(!AudioObjectUtils::SetDefaultDevice(outId, Output));
   }
 }
 
@@ -346,14 +339,12 @@ void testSetDefaultDeviceWithInvalidScope()
 {
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
   if (validId(inId) && !AudioObjectUtils::IsInScope(inId, Output)) {
-    // Surprisingly it's ok to set a non-output device to default output device.
-    assert(AudioObjectUtils::SetDefaultDevice(inId, Output));
+    assert(!AudioObjectUtils::SetDefaultDevice(inId, Output));
   }
 
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
   if (validId(outId) && !AudioObjectUtils::IsInScope(outId, Input)) {
-    // Surprisingly it's ok to set a non-input device to default intput device.
-    assert(AudioObjectUtils::SetDefaultDevice(outId, Input));
+    assert(!AudioObjectUtils::SetDefaultDevice(outId, Input));
   }
 }
 

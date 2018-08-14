@@ -26,9 +26,6 @@ public:
   static UInt32 GetDeviceSource(AudioObjectID aId, Scope aScope);
   static string GetDeviceSourceName(AudioObjectID aId, Scope aScope,
                                     UInt32 aSource);
-  // TODO: Validate the AudioObjectID and scope by ourselves since the
-  //       underlying native API always return noErr. See comment in its
-  //       implementation.
   static bool SetDefaultDevice(AudioObjectID aId, Scope aScope);
   // NOTE: It's impossible to get input-only or output-only devices in one API
   //       call. Apple doesn't provide that API. To get input-only or

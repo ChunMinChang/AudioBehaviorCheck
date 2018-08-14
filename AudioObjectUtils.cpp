@@ -210,13 +210,20 @@ AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
 /* static */ bool
 AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
 {
+  // Surprisingly it's ok to set
+  //   1. a unknown device
+  //   2. a non-input/non-output device
+  //   3. the current default input/output device
+  // as the new default input/output device by apple's API.
+  // We need to check the above things by ourselves.
+  if (aId == kAudioObjectUnknown ||
+      !IsInScope(aId, aScope) ||
+      aId == GetDefaultDeviceId(aScope)) {
+    return false;
+  }
+
   const AudioObjectPropertyAddress* address = aScope == Input ?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
-  // TODO: This API returns kAudioHardwareNoError almost in any case.
-  //       It returns kAudioHardwareNoError if aId is kAudioObjectUnknown.
-  //       It returns kAudioHardwareNoError even if we set a non-input/non-output
-  //       device to the default input/output device. It works weirdly.
-  //       It's better to check the aId by ourselves.
   return SetPropertyData(kAudioObjectSystemObject, address, &aId)
          == kAudioHardwareNoError;
 }
