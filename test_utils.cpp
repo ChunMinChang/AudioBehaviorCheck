@@ -23,9 +23,9 @@ void testGetDefaultDeviceId()
 
   // If we have default input/output devices, then they must be valid ids.
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
-  cout << "default input device: " << inId;
+  cout << "default input device: " << inId << endl;
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
-  cout << "default output device: " << outId;
+  cout << "default output device: " << outId << endl;
 }
 
 void testIsInScopeWithInvalidId()
