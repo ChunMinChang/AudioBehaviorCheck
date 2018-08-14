@@ -27,16 +27,16 @@ public:
   static string GetDeviceSourceName(AudioObjectID aId, Scope aScope,
                                     UInt32 aSource);
   static bool SetDefaultDevice(AudioObjectID aId, Scope aScope);
-  // NOTE: It's impossible to get input-only or output-only devices in one API
-  //       call. Apple doesn't provide that API. To get input-only or
-  //       output-only devices, you need to get all the devices first ans then
-  //       check if they are input or output ony by one.
   static vector<AudioObjectID> GetAllDeviceIds();
   // TODO: Consider if we should move following APIs to other module since they
   //       are rather higher level, that depends on the above low level APIs.
   //       When we write unit tests for these APIs, they work only when their
   //       base APIs work. However, the API users shouldn't know these
   //       dependences.
+  // NOTE: It's impossible to get input-only or output-only devices in one API
+  //       call. Apple doesn't provide that API. To get input-only or
+  //       output-only devices, you need to get all the devices first ans then
+  //       check if they are input or output ony by one.
   static vector<AudioObjectID> GetDeviceIds(Scope aScope);
   static string GetDeviceLabel(AudioObjectID aId, Scope aScope);
 
