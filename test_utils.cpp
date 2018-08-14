@@ -23,9 +23,9 @@ void testGetDefaultDeviceId()
 
   // If we have default input/output devices, then they must be valid ids.
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
-  assert(validId(inId));
+  cout << "default input device: " << inId;
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
-  assert(validId(outId));
+  cout << "default output device: " << outId;
 }
 
 void testIsInScope()
@@ -113,7 +113,6 @@ void testGetDeviceSource()
   testGetDeviceSourceWithValidParameters();
 }
 
-// TODO: What if data is valid?
 void testGetDeviceSourceNameWithInvalidId()
 {
   string name;
@@ -125,7 +124,6 @@ void testGetDeviceSourceNameWithInvalidId()
   assert(name.empty());
 }
 
-// TODO: What if data is valid?
 void testGetDeviceSourceNameWithInvalidScope()
 {
   string name;
