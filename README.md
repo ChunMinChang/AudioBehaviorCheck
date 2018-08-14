@@ -19,7 +19,7 @@ You can use ```$ make clean```
 - Able to let DeviceChangeCallback to notify users what exact change is
 - Need to find a way to fire device-added/removed events without
   manually unplugging/plugging devices (Is it possible?).
-  - Mayube we need to find a way to fake a device and then add or remove it
+  - Maybe we need to find a way to fake a device and then add or remove it
 - Test some APIs that might use mutex inside AudioUnit in *test_deadlock.cpp*
   and see if they will lead to a deadlock.
   The candidates are ```AudioUnitGetProperty``` and ```AudioUnitSetProperty```.
@@ -27,8 +27,9 @@ You can use ```$ make clean```
 - Replace ```pthread``` by ```std::thread``` and ```pthread_mutex``` by ```std::mutex```
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
+- Split *AudioObjectUtils* into a *internal* one and a *exposed* one maybe since some APIs are on different levels.
 - Split tests into smaller chunks.
-- Split *AudioObjectUtils* into a *internal* one and a *exposed* one maybe since some APIs are in differen levels.
+- Use *gtest*
 
 ## Tests
 
