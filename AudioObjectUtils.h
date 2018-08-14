@@ -8,7 +8,8 @@
 using std::vector;
 using std::string;
 
-// Provide low-level APIs to get device-related information.
+// Provide low-level APIs to get device-related information or set
+// default input or output devices.
 class AudioObjectUtils
 {
 public:
