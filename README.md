@@ -27,7 +27,6 @@ You can use ```$ make clean```
 - Replace ```pthread``` by ```std::thread``` and ```pthread_mutex``` by ```std::mutex```
 - Change style: remove prefix `a` in all arguments
 - Put all ```AudioObjectPropertyAddress``` into a common header.
-- Split *AudioObjectUtils* into a *internal* one and a *exposed* one maybe since some APIs are on different levels.
 - Split tests into smaller chunks.
 - Use *gtest*
 
