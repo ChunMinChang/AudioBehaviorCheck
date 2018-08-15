@@ -32,10 +32,9 @@ public:
   // NOTE: The following two APIs are rather higher level. They are implemented
   //       based on the above APIs.
 
-  // NOTE: It's impossible to get input-only or output-only devices in one API
-  //       call. Apple doesn't provide that API. To get input-only or
-  //       output-only devices, you need to get all the devices first ans then
-  //       check if they are input or output ony by one.
+  // NOTE: Apple has no API to get input-only or output-only devices. To do
+  //       that, we need to get all the devices first ans then check if they
+  //       are input or output ony by one.
   static vector<AudioObjectID> GetDeviceIds(Scope aScope);
   static string GetDeviceLabel(AudioObjectID aId, Scope aScope);
 
