@@ -1,7 +1,8 @@
 #ifndef AUDIOOBJECTUTILS_H
 #define AUDIOOBJECTUTILS_H
 
-#include <CoreAudio/CoreAudio.h>
+#include <CoreAudio/AudioHardware.h>
+#include <CoreAudio/AudioHardwareBase.h>
 #include <string>
 #include <vector>
 
