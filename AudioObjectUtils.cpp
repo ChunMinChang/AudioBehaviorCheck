@@ -86,7 +86,7 @@ AudioObjectUtils::GetNumberOfStreams(AudioObjectID id, Scope scope)
 }
 
 /* static */ bool
-AudioObjectUtils::IsInScope(AudioObjectID id, Scope scope)
+AudioObjectUtils::InScope(AudioObjectID id, Scope scope)
 {
   return GetNumberOfStreams(id, scope) > 0;
 }
@@ -217,7 +217,7 @@ AudioObjectUtils::SetDefaultDevice(AudioObjectID id, Scope scope)
   // as the new default input/output device by apple's API.
   // We need to check the above things by ourselves.
   if (id == kAudioObjectUnknown ||
-      !IsInScope(id, scope) ||
+      !InScope(id, scope) ||
       id == GetDefaultDeviceId(scope)) {
     return false;
   }
@@ -247,7 +247,7 @@ AudioObjectUtils::GetDeviceIds(Scope scope) {
 
   vector<AudioObjectID> all = AudioObjectUtils::GetAllDeviceIds();
   for (AudioObjectID id : all) {
-    if (IsInScope(id, scope)) {
+    if (InScope(id, scope)) {
       ids.push_back(id);
     }
   }
@@ -259,7 +259,7 @@ AudioObjectUtils::GetDeviceIds(Scope scope) {
 AudioObjectUtils::GetDeviceLabel(AudioObjectID id, Scope scope)
 {
   string label;
-  if (!IsInScope(id, scope)) {
+  if (!InScope(id, scope)) {
     return label;
   }
 

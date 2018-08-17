@@ -28,27 +28,27 @@ void testGetDefaultDeviceId()
   cout << "default output device: " << outId << endl;
 }
 
-void testIsInScopeWithInvalidId()
+void testInScopeWithInvalidId()
 {
   // Return false for invalid ids.
-  assert(!AudioObjectUtils::IsInScope(kAudioObjectUnknown, Input));
-  assert(!AudioObjectUtils::IsInScope(kAudioObjectUnknown, Output));
+  assert(!AudioObjectUtils::InScope(kAudioObjectUnknown, Input));
+  assert(!AudioObjectUtils::InScope(kAudioObjectUnknown, Output));
 }
 
-void testIsInScopeWithValidParameters()
+void testInScopeWithValidParameters()
 {
   // Return true if we have valid ids.
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
-  assert(validId(inId) == AudioObjectUtils::IsInScope(inId, Input));
+  assert(validId(inId) == AudioObjectUtils::InScope(inId, Input));
 
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
-  assert(validId(outId) == AudioObjectUtils::IsInScope(outId, Output));
+  assert(validId(outId) == AudioObjectUtils::InScope(outId, Output));
 }
 
-void testIsInScope()
+void testInScope()
 {
-  testIsInScopeWithInvalidId();
-  testIsInScopeWithValidParameters();
+  testInScopeWithInvalidId();
+  testInScopeWithValidParameters();
 }
 
 void testGetDeviceNameWithInvalidId()
@@ -88,7 +88,7 @@ void testGetDeviceSourceWithInvalidScope()
 
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
   bool validInputIsNotOutput = validId(inId) &&
-                               !AudioObjectUtils::IsInScope(inId, Output);
+                               !AudioObjectUtils::InScope(inId, Output);
   if (validInputIsNotOutput) {
     data = AudioObjectUtils::GetDeviceSource(inId, Output);
     assert(!data);
@@ -96,7 +96,7 @@ void testGetDeviceSourceWithInvalidScope()
 
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
   bool validOutputIsNotInput = validId(outId) &&
-                               !AudioObjectUtils::IsInScope(outId, Input);
+                               !AudioObjectUtils::InScope(outId, Input);
   if (validOutputIsNotInput) {
     data = AudioObjectUtils::GetDeviceSource(outId, Input);
     assert(!data);
@@ -148,7 +148,7 @@ void testGetDeviceSourceNameWithInvalidScope()
 
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
   bool validInputIsNotOutput = validId(inId) &&
-                               !AudioObjectUtils::IsInScope(inId, Output);
+                               !AudioObjectUtils::InScope(inId, Output);
   if (validInputIsNotOutput) {
     name = AudioObjectUtils::GetDeviceSourceName(inId, Output, 0);
     assert(name.empty());
@@ -156,7 +156,7 @@ void testGetDeviceSourceNameWithInvalidScope()
 
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
   bool validOutputIsNotInput = validId(outId) &&
-                               !AudioObjectUtils::IsInScope(outId, Input);
+                               !AudioObjectUtils::InScope(outId, Input);
   if (validOutputIsNotInput) {
     name = AudioObjectUtils::GetDeviceSourceName(outId, Input, 0);
     assert(name.empty());
@@ -236,13 +236,13 @@ void testGetDeviceLabelWithInvalidScope()
   string label;
 
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
-  if (!AudioObjectUtils::IsInScope(inId, Output)) {
+  if (!AudioObjectUtils::InScope(inId, Output)) {
     label = AudioObjectUtils::GetDeviceLabel(inId, Output);
     assert(label.empty());
   }
 
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
-  if (!AudioObjectUtils::IsInScope(outId, Input)) {
+  if (!AudioObjectUtils::InScope(outId, Input)) {
     label = AudioObjectUtils::GetDeviceLabel(outId, Input);
     assert(label.empty());
   }
@@ -279,7 +279,7 @@ void printDeviceInfo(AudioObjectID aId)
   cout << "Device " << aId << ": ";
   string info;
   for (auto scope : { Input, Output }) {
-    if (!AudioObjectUtils::IsInScope(aId, scope)) {
+    if (!AudioObjectUtils::InScope(aId, scope)) {
       continue;
     }
     AudioObjectID defaultId = AudioObjectUtils::GetDefaultDeviceId(scope);
@@ -327,12 +327,12 @@ void testSetDefaultDeviceWithSameDefaultDevice()
 void testSetDefaultDeviceWithInvalidScope()
 {
   AudioObjectID inId = AudioObjectUtils::GetDefaultDeviceId(Input);
-  if (validId(inId) && !AudioObjectUtils::IsInScope(inId, Output)) {
+  if (validId(inId) && !AudioObjectUtils::InScope(inId, Output)) {
     assert(!AudioObjectUtils::SetDefaultDevice(inId, Output));
   }
 
   AudioObjectID outId = AudioObjectUtils::GetDefaultDeviceId(Output);
-  if (validId(outId) && !AudioObjectUtils::IsInScope(outId, Input)) {
+  if (validId(outId) && !AudioObjectUtils::InScope(outId, Input)) {
     assert(!AudioObjectUtils::SetDefaultDevice(outId, Input));
   }
 }
@@ -381,7 +381,7 @@ void testSetDefaultDevice()
 int main()
 {
   testGetDefaultDeviceId();
-  testIsInScope();
+  testInScope();
   testGetDeviceName();
   testGetDeviceSource();
   testGetDeviceSourceName();

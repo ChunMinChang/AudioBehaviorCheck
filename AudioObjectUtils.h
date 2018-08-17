@@ -23,7 +23,7 @@ public:
   // NOTE: When there is no valid device, the underlying API will return
   //       kAudioObjectUnknown.
   static AudioObjectID GetDefaultDeviceId(Scope scope);
-  static bool IsInScope(AudioObjectID id, Scope scope);
+  static bool InScope(AudioObjectID id, Scope scope);
   static string GetDeviceName(AudioObjectID id);
   static UInt32 GetDeviceSource(AudioObjectID id, Scope scope);
   static string GetDeviceSourceName(AudioObjectID id, Scope scope,
