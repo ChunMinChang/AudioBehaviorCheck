@@ -22,13 +22,13 @@ public:
   };
   // NOTE: When there is no valid device, the underlying API will return
   //       kAudioObjectUnknown.
-  static AudioObjectID GetDefaultDeviceId(Scope aScope);
-  static bool IsInScope(AudioObjectID aId, Scope aScope);
-  static string GetDeviceName(AudioObjectID aId);
-  static UInt32 GetDeviceSource(AudioObjectID aId, Scope aScope);
-  static string GetDeviceSourceName(AudioObjectID aId, Scope aScope,
-                                    UInt32 aSource);
-  static bool SetDefaultDevice(AudioObjectID aId, Scope aScope);
+  static AudioObjectID GetDefaultDeviceId(Scope scope);
+  static bool IsInScope(AudioObjectID id, Scope scope);
+  static string GetDeviceName(AudioObjectID id);
+  static UInt32 GetDeviceSource(AudioObjectID id, Scope scope);
+  static string GetDeviceSourceName(AudioObjectID id, Scope scope,
+                                    UInt32 source);
+  static bool SetDefaultDevice(AudioObjectID id, Scope scope);
   static vector<AudioObjectID> GetAllDeviceIds();
   // NOTE: The following two APIs are rather higher level. They are implemented
   //       based on the above APIs.
@@ -36,28 +36,28 @@ public:
   // NOTE: Apple has no API to get input-only or output-only devices. To do
   //       that, we need to get all the devices first ans then check if they
   //       are input or output ony by one.
-  static vector<AudioObjectID> GetDeviceIds(Scope aScope);
-  static string GetDeviceLabel(AudioObjectID aId, Scope aScope);
+  static vector<AudioObjectID> GetDeviceIds(Scope scope);
+  static string GetDeviceLabel(AudioObjectID id, Scope scope);
 
 private:
-  static UInt32 GetNumberOfStreams(AudioObjectID aId, Scope aScope);
-  static string CFStringRefToUTF8(CFStringRef aString);
+  static UInt32 GetNumberOfStreams(AudioObjectID id, Scope scope);
+  static string CFStringRefToUTF8(CFStringRef stringRef);
 
   template<typename T>
-  static OSStatus GetPropertyData(AudioObjectID aId,
+  static OSStatus GetPropertyData(AudioObjectID id,
                                   const AudioObjectPropertyAddress* address,
                                   T* data) {
     UInt32 size = sizeof(T);
-    return AudioObjectGetPropertyData(aId, address, 0, nullptr, &size,
+    return AudioObjectGetPropertyData(id, address, 0, nullptr, &size,
                                       static_cast<void*>(data));
   }
 
   template<typename T>
-  static OSStatus GetPropertyArray(AudioObjectID aId,
+  static OSStatus GetPropertyArray(AudioObjectID id,
                                    const AudioObjectPropertyAddress* address,
                                    vector<T>* array) {
     UInt32 size = 0;
-    OSStatus r = GetPropertyDataSize(aId, address, &size);
+    OSStatus r = GetPropertyDataSize(id, address, &size);
     if (r != kAudioHardwareNoError) {
       return r;
     }
@@ -65,7 +65,7 @@ private:
       return r; // TODO: Maybe throw an error instead.
     }
     vector<T> data(size / sizeof(T));
-    r = AudioObjectGetPropertyData(aId, address, 0, nullptr, &size,
+    r = AudioObjectGetPropertyData(id, address, 0, nullptr, &size,
                                    static_cast<void*>(data.data()));
     if (r == kAudioHardwareNoError) {
       *array = data;
@@ -73,17 +73,17 @@ private:
     return r;
   }
 
-  static OSStatus GetPropertyDataSize(AudioObjectID aId,
+  static OSStatus GetPropertyDataSize(AudioObjectID id,
                                       const AudioObjectPropertyAddress* address,
                                       UInt32 *size) {
-    return AudioObjectGetPropertyDataSize(aId, address, 0, nullptr, size);
+    return AudioObjectGetPropertyDataSize(id, address, 0, nullptr, size);
   }
 
   template<typename T>
-  static OSStatus SetPropertyData(AudioObjectID aId,
+  static OSStatus SetPropertyData(AudioObjectID id,
                                   const AudioObjectPropertyAddress *address,
                                   const T* data) {
-    return AudioObjectSetPropertyData(aId, address, 0, nullptr, sizeof(T),
+    return AudioObjectSetPropertyData(id, address, 0, nullptr, sizeof(T),
                                       static_cast<const void*>(data));
   }
 };

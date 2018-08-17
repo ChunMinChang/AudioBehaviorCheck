@@ -62,10 +62,10 @@ const AudioObjectPropertyAddress kOutputDeviceSourceNamePropertyAddress = {
 };
 
 /* static */ AudioObjectID
-AudioObjectUtils::GetDefaultDeviceId(Scope aScope)
+AudioObjectUtils::GetDefaultDeviceId(Scope scope)
 {
   AudioObjectID id = kAudioObjectUnknown;
-  const AudioObjectPropertyAddress* address = aScope == Input?
+  const AudioObjectPropertyAddress* address = scope == Input?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
   OSStatus status = GetPropertyData(kAudioObjectSystemObject, address, &id);
   if (status != kAudioHardwareNoError) {
@@ -75,35 +75,35 @@ AudioObjectUtils::GetDefaultDeviceId(Scope aScope)
 }
 
 /* static */ UInt32
-AudioObjectUtils::GetNumberOfStreams(AudioObjectID aId, Scope aScope)
+AudioObjectUtils::GetNumberOfStreams(AudioObjectID id, Scope scope)
 {
-  const AudioObjectPropertyAddress* address = aScope == Input ?
+  const AudioObjectPropertyAddress* address = scope == Input ?
     &kInputDeviceStreamsPropertyAddress : &kOutputDeviceStreamsPropertyAddress;
   UInt32 size = 0;
-  OSStatus status = GetPropertyDataSize(aId, address, &size);
+  OSStatus status = GetPropertyDataSize(id, address, &size);
   return status == kAudioHardwareNoError ?
     static_cast<UInt32>(size / sizeof(AudioStreamID)) : 0;
 }
 
 /* static */ bool
-AudioObjectUtils::IsInScope(AudioObjectID aId, Scope aScope)
+AudioObjectUtils::IsInScope(AudioObjectID id, Scope scope)
 {
-  return GetNumberOfStreams(aId, aScope) > 0;
+  return GetNumberOfStreams(id, scope) > 0;
 }
 
 // /* static */ string
-// AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
+// AudioObjectUtils::CFStringRefToUTF8(CFStringRef stringRef)
 // {
 //   string s;
-//   if (!aString) {
+//   if (!stringRef) {
 //     return s;
 //   }
 
-//   CFIndex length = CFStringGetLength(aString);
+//   CFIndex length = CFStringGetLength(stringRef);
 //   CFIndex size = CFStringGetMaximumSizeForEncoding(length,
 //                                                    kCFStringEncodingUTF8) + 1;
 //   char* buffer = new char[size];
-//   if (CFStringGetCString(aString, buffer, size, kCFStringEncodingUTF8)) {
+//   if (CFStringGetCString(stringRef, buffer, size, kCFStringEncodingUTF8)) {
 //     s = string(buffer);
 //   }
 
@@ -112,21 +112,21 @@ AudioObjectUtils::IsInScope(AudioObjectID aId, Scope aScope)
 // }
 
 /* static */ string
-AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
+AudioObjectUtils::CFStringRefToUTF8(CFStringRef stringRef)
 {
   string s;
-  if (!aString) {
+  if (!stringRef) {
     return s;
   }
 
-  CFIndex length = CFStringGetLength(aString);
+  CFIndex length = CFStringGetLength(stringRef);
   if (!length) {
     return s;
   }
 
   CFRange stringRange = CFRangeMake(0, length);
   CFIndex size = 0;
-  CFIndex converted = CFStringGetBytes(aString,
+  CFIndex converted = CFStringGetBytes(stringRef,
                                        stringRange,
                                        kCFStringEncodingUTF8,
                                        0,       // lossByte
@@ -141,7 +141,7 @@ AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
   size_t elements = size + 1; // + 1 for a NUL terminator.
   vector<char> buffer(elements);
 
-  converted = CFStringGetBytes(aString,
+  converted = CFStringGetBytes(stringRef,
                                stringRange,
                                kCFStringEncodingUTF8,
                                0,      // lossByte
@@ -158,10 +158,10 @@ AudioObjectUtils::CFStringRefToUTF8(CFStringRef aString)
 }
 
 /* static */ string
-AudioObjectUtils::GetDeviceName(AudioObjectID aId)
+AudioObjectUtils::GetDeviceName(AudioObjectID id)
 {
   CFStringRef data = nullptr;
-  OSStatus status = GetPropertyData(aId, &kDeviceNamePropertyAddress, &data);
+  OSStatus status = GetPropertyData(id, &kDeviceNamePropertyAddress, &data);
   if (status != kAudioHardwareNoError || !data) {
     return ""; // TODO: Maybe throw an error instead.
   }
@@ -172,12 +172,12 @@ AudioObjectUtils::GetDeviceName(AudioObjectID aId)
 }
 
 /* static */ UInt32
-AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope)
+AudioObjectUtils::GetDeviceSource(AudioObjectID id, Scope scope)
 {
   UInt32 data = 0;
-  const AudioObjectPropertyAddress* address = aScope == Input ?
+  const AudioObjectPropertyAddress* address = scope == Input ?
     &kInputDeviceSourcePropertyAddress : &kOutputDeviceSourcePropertyAddress;
-  OSStatus status = GetPropertyData(aId, address, &data);
+  OSStatus status = GetPropertyData(id, address, &data);
   if (status != kAudioHardwareNoError) {
     return 0; // TODO: Maybe throw an error instead.
   }
@@ -186,7 +186,7 @@ AudioObjectUtils::GetDeviceSource(AudioObjectID aId, Scope aScope)
 }
 
 /* static */ string
-AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
+AudioObjectUtils::GetDeviceSourceName(AudioObjectID id, Scope scope,
                                       UInt32 aSource)
 {
   CFStringRef source = nullptr;
@@ -196,10 +196,10 @@ AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
   translation.mOutputData = &source;
   translation.mOutputDataSize = sizeof(source);
 
-  const AudioObjectPropertyAddress* address = aScope == Input
+  const AudioObjectPropertyAddress* address = scope == Input
     ? &kInputDeviceSourceNamePropertyAddress
     : &kOutputDeviceSourceNamePropertyAddress;
-  OSStatus status = GetPropertyData(aId, address, &translation);
+  OSStatus status = GetPropertyData(id, address, &translation);
   if (status != kAudioHardwareNoError) {
     return ""; // TODO: Maybe throw an error instead.
   }
@@ -208,7 +208,7 @@ AudioObjectUtils::GetDeviceSourceName(AudioObjectID aId, Scope aScope,
 }
 
 /* static */ bool
-AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
+AudioObjectUtils::SetDefaultDevice(AudioObjectID id, Scope scope)
 {
   // Surprisingly it's ok to set
   //   1. a unknown device
@@ -216,15 +216,15 @@ AudioObjectUtils::SetDefaultDevice(AudioObjectID aId, Scope aScope)
   //   3. the current default input/output device
   // as the new default input/output device by apple's API.
   // We need to check the above things by ourselves.
-  if (aId == kAudioObjectUnknown ||
-      !IsInScope(aId, aScope) ||
-      aId == GetDefaultDeviceId(aScope)) {
+  if (id == kAudioObjectUnknown ||
+      !IsInScope(id, scope) ||
+      id == GetDefaultDeviceId(scope)) {
     return false;
   }
 
-  const AudioObjectPropertyAddress* address = aScope == Input ?
+  const AudioObjectPropertyAddress* address = scope == Input ?
     &kDefaultInputDevicePropertyAddress : &kDefaultOutputDevicePropertyAddress;
-  return SetPropertyData(kAudioObjectSystemObject, address, &aId)
+  return SetPropertyData(kAudioObjectSystemObject, address, &id)
          == kAudioHardwareNoError;
 }
 
@@ -242,12 +242,12 @@ AudioObjectUtils::GetAllDeviceIds()
 }
 
 /* static */ vector<AudioObjectID>
-AudioObjectUtils::GetDeviceIds(Scope aScope) {
+AudioObjectUtils::GetDeviceIds(Scope scope) {
   vector<AudioObjectID> ids;
 
   vector<AudioObjectID> all = AudioObjectUtils::GetAllDeviceIds();
   for (AudioObjectID id : all) {
-    if (IsInScope(id, aScope)) {
+    if (IsInScope(id, scope)) {
       ids.push_back(id);
     }
   }
@@ -256,17 +256,17 @@ AudioObjectUtils::GetDeviceIds(Scope aScope) {
 }
 
 /* static */ string
-AudioObjectUtils::GetDeviceLabel(AudioObjectID aId, Scope aScope)
+AudioObjectUtils::GetDeviceLabel(AudioObjectID id, Scope scope)
 {
   string label;
-  if (!IsInScope(aId, aScope)) {
+  if (!IsInScope(id, scope)) {
     return label;
   }
 
-  UInt32 source = GetDeviceSource(aId, aScope);
-  label = GetDeviceSourceName(aId, aScope, source);
+  UInt32 source = GetDeviceSource(id, scope);
+  label = GetDeviceSourceName(id, scope, source);
   if (label.empty()) {
-    label = GetDeviceName(aId);
+    label = GetDeviceName(id);
   }
   return label;
 }
