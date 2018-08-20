@@ -13,28 +13,28 @@ public:
   AudioObject(AudioObjectID id, AudioClassID classId);
   ~AudioObject();
 
-  bool HasProperty(const AudioObjectPropertyAddress* address);
-  bool IsPropertySettable(const AudioObjectPropertyAddress* address);
+  bool HasProperty(const AudioObjectPropertyAddress* address) const;
+  bool IsPropertySettable(const AudioObjectPropertyAddress* address) const;
 
   template<typename T>
-  OSStatus GetPropertyData(const AudioObjectPropertyAddress* address, T* data) {
+  OSStatus GetPropertyData(const AudioObjectPropertyAddress* address, T* data) const {
     return GetPropertyData(_id, address, data);
   }
 
   OSStatus GetPropertyDataSize(const AudioObjectPropertyAddress* address,
-                               UInt32 *size) {
+                               UInt32 *size) const {
     return GetPropertyDataSize(_id, address, size);
   }
 
   template<typename T>
   OSStatus GetPropertyArray(const AudioObjectPropertyAddress* address,
-                            vector<T>* array) {
+                            vector<T>* array) const {
     return GetPropertyDataSize(_id, address, array);
   }
 
   template<typename T>
   OSStatus SetPropertyData(const AudioObjectPropertyAddress *address,
-                           const T* data) {
+                           const T* data) const {
     return AudioObjectSetPropertyData(_id, address, 0, nullptr, sizeof(T),
                                       static_cast<const void*>(data));
   }
@@ -46,7 +46,7 @@ private:
   AudioObjectID _id;
   AudioClassID _classId;
 
-  bool IsClass(AudioClassID classId);
+  bool IsClass(AudioClassID classId) const;
 
   template<typename T>
   static OSStatus GetPropertyData(AudioObjectID id,

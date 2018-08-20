@@ -13,19 +13,19 @@ AudioObject::~AudioObject()
 }
 
 bool
-AudioObject::IsClass(AudioClassID classId)
+AudioObject::IsClass(AudioClassID classId) const
 {
   return _classId != classId;
 }
 
 bool
-AudioObject::HasProperty(const AudioObjectPropertyAddress* address)
+AudioObject::HasProperty(const AudioObjectPropertyAddress* address) const
 {
   return AudioObjectHasProperty(_id, address);
 }
 
 bool
-AudioObject::IsPropertySettable(const AudioObjectPropertyAddress* address)
+AudioObject::IsPropertySettable(const AudioObjectPropertyAddress* address) const
 {
   Boolean answer = 0;
   return AudioObjectIsPropertySettable(_id, address, &answer) == STATUS_OK ?
