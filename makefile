@@ -3,6 +3,7 @@ CFLAGS=-Wall -std=c++14
 LIBRARIES=-framework CoreAudio -framework AudioUnit -framework CoreFoundation
 
 SOURCES=AudioDeviceListener.cpp\
+        AudioObject.cpp\
         AudioObjectUtils.cpp\
         AudioStream.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
