@@ -29,6 +29,7 @@ You can use ```$ make clean```
 - Put all ```AudioObjectPropertyAddress``` into a common header.
 - Split tests into smaller chunks.
 - Use *gtest*
+- Use *singleton pattern* for ```AudioObject``` since the devices, which are basically ```AudioObject```s with some defined ```AudioObjectID```s, are shared among different threads. We also need to use *read-write lock*s with their *getters* and *setters*.
 
 ## Tests
 
