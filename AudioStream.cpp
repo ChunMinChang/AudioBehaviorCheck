@@ -2,49 +2,91 @@
 #include <CoreAudio/CoreAudio.h>
 #include <cassert>
 
+const unsigned int FORMAT_LEN = AudioStream::F32BE + 1;
 
-#define AU_OUT_BUS  0
-// #define AU_IN_BUS   1
+AudioStreamBasicDescription
+AudioStream::Parameters::GetFormatDescription()
+{
+  AudioStreamBasicDescription desc;
+  memset(&desc, 0, sizeof(desc));
+  desc.mSampleRate = mRate;
+  desc.mChannelsPerFrame = mChannels;
+  desc.mFormatID = kAudioFormatLinearPCM;
+  desc.mFormatFlags = GetFormatFlags();
+  desc.mFramesPerPacket = 1;
+  desc.mBytesPerFrame = GetFormatByteSize() * desc.mChannelsPerFrame;
+  desc.mBytesPerPacket = desc.mBytesPerFrame * desc.mFramesPerPacket;
+  desc.mBitsPerChannel = GetFormatByteSize() * 8;
+  desc.mReserved = 0;
+
+  return desc;
+}
+
+size_t
+AudioStream::Parameters::GetFormatByteSize()
+{
+  static size_t formatSizes[FORMAT_LEN] = {
+    sizeof(short), // S16LE
+    sizeof(short), // S16BE
+    sizeof(float), // F32LE
+    sizeof(float)  // F32BE
+  };
+
+  return formatSizes[mFormat];
+}
+
+AudioFormatFlags
+AudioStream::Parameters::GetFormatFlags()
+{
+  static AudioFormatFlags formatFlags[FORMAT_LEN] = {
+    kAudioFormatFlagIsSignedInteger,                                // S16LE
+    kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsBigEndian,  // S16BE
+    kAudioFormatFlagIsFloat,                                        // F32LE
+    kAudioFormatFlagIsFloat | kAudioFormatFlagIsBigEndian,          // F32BE
+  };
+
+  AudioFormatFlags defaultFlags = kLinearPCMFormatFlagIsPacked;
+  return defaultFlags | formatFlags[mFormat];
+}
 
 AudioStream::AudioStream(Format aFormat,
-                         unsigned int aRate,
                          unsigned int aChannels,
+                         double aRate,
                          AudioCallback aCallback)
-  : mRate(aRate)
-  , mChannels(aChannels)
-  , mUnit(nullptr)
+  : mUnit(nullptr)
   , mCallback(aCallback)
+  , mParams({ aFormat,
+              static_cast<UInt32>(aChannels),
+              static_cast<Float64>(aRate) })
 {
-  assert(mRate && mChannels);
-  CreateAudioUnit(); // Initialize mUnit
-  assert(SetDescription(aFormat)); // Initialize mDescription
-  assert(SetCallback()); // Render output to DataCallback
-  assert(AudioUnitInitialize(mUnit) == noErr);
+  assert(CreateAudioUnit());
+  assert(SetStreamFormat());
+  assert(SetCallback());
+  assert(InitAudioUnit());
 }
 
 AudioStream::~AudioStream()
 {
-  assert(mUnit);
-  assert(AudioOutputUnitStop(mUnit) == noErr);
-  assert(AudioUnitUninitialize(mUnit) == noErr);
-  assert(AudioComponentInstanceDispose(mUnit) == noErr);
+  Stop();
+  assert(UninitAudioUnit());
+  assert(DestroyAudioUnit());
 }
 
-void
+bool
 AudioStream::Start()
 {
   assert(mUnit);
-  assert(AudioOutputUnitStart(mUnit) == noErr);
+  return AudioOutputUnitStart(mUnit) == noErr;
 }
 
-void
+bool
 AudioStream::Stop()
 {
   assert(mUnit);
-  assert(AudioOutputUnitStop(mUnit) == noErr);
+  return AudioOutputUnitStop(mUnit) == noErr;
 }
 
-void
+bool
 AudioStream::CreateAudioUnit()
 {
   assert(!mUnit); // mUnit should be nullptr before initializing.
@@ -57,60 +99,42 @@ AudioStream::CreateAudioUnit()
   desc.componentFlagsMask = 0;
 
   AudioComponent comp = AudioComponentFindNext(NULL, &desc);
-  assert(comp); // comp will be nullptr if there is no matching audio hardware.
+  // comp will be nullptr if there is no matching audio hardware.
 
-  assert(AudioComponentInstanceNew(comp, &mUnit) == noErr);
-  assert(mUnit); // mUnit should NOT be nullptr after initializing.
+  return comp && AudioComponentInstanceNew(comp, &mUnit) == noErr;
 }
 
 bool
-AudioStream::SetDescription(Format aFormat)
+AudioStream::DestroyAudioUnit()
 {
-  memset(&mDescription, 0, sizeof(mDescription));
-  switch (aFormat) {
-    case S16LE:
-      mDescription.mBitsPerChannel = 16;
-      mDescription.mFormatFlags = kAudioFormatFlagIsSignedInteger;
-      break;
-    case S16BE:
-      mDescription.mBitsPerChannel = 16;
-      mDescription.mFormatFlags = kAudioFormatFlagIsSignedInteger |
-                                  kAudioFormatFlagIsBigEndian;
-      break;
-    case F32LE:
-      mDescription.mBitsPerChannel = 32;
-      mDescription.mFormatFlags = kAudioFormatFlagIsFloat;
-      break;
-    case F32BE:
-      mDescription.mBitsPerChannel = 32;
-      mDescription.mFormatFlags = kAudioFormatFlagIsFloat |
-                                  kAudioFormatFlagIsBigEndian;
-      break;
-    default:
-      return false;
-  }
+  assert(mUnit);
+  return AudioComponentInstanceDispose(mUnit) == noErr;
+}
 
-  // The mFormatFlags below should be set by "|" or operator,
-  // or the assigned flags above will be cleared.
-  mDescription.mFormatID = kAudioFormatLinearPCM;
-  mDescription.mFormatFlags |= kLinearPCMFormatFlagIsPacked;
-  mDescription.mSampleRate = mRate;
-  mDescription.mChannelsPerFrame = mChannels;
+bool
+AudioStream::InitAudioUnit()
+{
+  assert(mUnit);
+  return AudioUnitInitialize(mUnit) == noErr;
+}
 
-  mDescription.mBytesPerFrame = (mDescription.mBitsPerChannel / 8) *
-                                mDescription.mChannelsPerFrame;
+bool
+AudioStream::UninitAudioUnit()
+{
+  assert(mUnit);
+  return AudioUnitUninitialize(mUnit) == noErr;
+}
 
-  mDescription.mFramesPerPacket = 1;
-  mDescription.mBytesPerPacket = mDescription.mBytesPerFrame *
-                                 mDescription.mFramesPerPacket;
-  mDescription.mReserved = 0;
-
+bool
+AudioStream::SetStreamFormat()
+{
+  AudioStreamBasicDescription desc = mParams.GetFormatDescription();
   return AudioUnitSetProperty(mUnit,
                               kAudioUnitProperty_StreamFormat,
                               kAudioUnitScope_Input,
-                              AU_OUT_BUS,
-                              &mDescription,
-                              sizeof(mDescription)) == noErr;
+                              OutputBus,
+                              &desc,
+                              sizeof(desc)) == noErr;
 }
 
 bool
@@ -119,14 +143,29 @@ AudioStream::SetCallback()
   AURenderCallbackStruct aurcbs;
   memset(&aurcbs, 0, sizeof(aurcbs));
   aurcbs.inputProc = DataCallback;
-  aurcbs.inputProcRefCon = this; // Pass this as callback's arguments
+  aurcbs.inputProcRefCon = this; // Set the callback target to `this`.
 
   return AudioUnitSetProperty(mUnit,
                               kAudioUnitProperty_SetRenderCallback,
-                              kAudioUnitScope_Global,
-                              AU_OUT_BUS,
+                              kAudioUnitScope_Input,
+                              OutputBus,
                               &aurcbs,
                               sizeof(aurcbs)) == noErr;
+}
+
+OSStatus
+AudioStream::Render(AudioUnitRenderActionFlags* aActionFlags,
+                    const AudioTimeStamp* aTimeStamp,
+                    UInt32 aBusNumber,
+                    UInt32 aNumFrames,
+                    AudioBufferList* aData)
+{
+  assert(aBusNumber == OutputBus);
+  assert(aData->mNumberBuffers == 1);
+
+  void* buffer = aData->mBuffers[0].mData;
+  mCallback(buffer, aNumFrames);
+  return noErr;
 }
 
 /* static */ OSStatus
@@ -137,11 +176,9 @@ AudioStream::DataCallback(void* aRefCon,
                           UInt32 aNumFrames,
                           AudioBufferList* aData)
 {
-  assert(aBusNumber == AU_OUT_BUS);
+  assert(aBusNumber == OutputBus);
   assert(aData->mNumberBuffers == 1);
 
-  AudioStream* as = static_cast<AudioStream*>(aRefCon); // Get arguments
-  void* buffer = aData->mBuffers[0].mData;
-  as->mCallback(buffer, aNumFrames);
-  return noErr;
+  AudioStream* as = static_cast<AudioStream*>(aRefCon);
+  return as->Render(aActionFlags, aTimeStamp, aBusNumber, aNumFrames, aData);
 }

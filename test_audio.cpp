@@ -1,9 +1,10 @@
 #include "AudioStream.h"
-#include "utils.h"  // for delay
-#include <math.h>   // for M_PI, sin
-#include <vector>   // for vector
+#include "utils.h"      // for delay
+#include <math.h>       // for M_PI, sin
+#include <vector>       // for std::vector
+#include <type_traits>  // std::is_same
 
-const unsigned int kFequency = 44100;
+const double kFequency = 44100.0;
 const unsigned int kChannels = 2;
 
 bool gCalled = false;
@@ -56,16 +57,30 @@ void callback(void* aBuffer, unsigned long aFrames)
   gCalled = true;
 }
 
-int main()
+template<typename T>
+void play_sound()
 {
-  AudioStream as(AudioStream::Format::F32LE, kFequency, kChannels, callback<float>);
-  // AudioStream as(AudioStream::Format::S16LE, kFequency, kChannels, callback<short>);
+  AudioStream::Format format;
+  if (std::is_same<T, float>::value) {
+    format = AudioStream::F32LE;
+  } else if (std::is_same<T, short>::value) {
+    format = AudioStream::S16LE;
+  } else {
+    assert(false && "Unsupport type!");
+  }
+
+  AudioStream as(format, kChannels, kFequency, callback<T>);
 
   as.Start();
   delay(1000);
   as.Stop();
 
   assert(gCalled && "Callback should be fired!");
+}
 
+int main()
+{
+  play_sound<float>();
+  play_sound<short>();
   return 0;
 }

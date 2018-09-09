@@ -26,7 +26,7 @@
 // The signal alias for calling our thread killer.
 #define CALL_THREAD_KILLER SIGUSR1
 
-const unsigned int kFequency = 44100;
+const double kFequency = 44100.0;
 const unsigned int kChannels = 2;
 
 // If we apply ERRORCHECK mode, then we can't unlock a mutex locked by a
@@ -108,7 +108,7 @@ void* task(void*)
 
   // Creating another AudioUnit when we already had one will cause a deadlock!
   LOG("[%llu] Try creating another AudioUnit (getting mutex_AU)...\n", id);
-  AudioStream as(AudioStream::Format::F32LE, kFequency, kChannels, callback);
+  AudioStream as(AudioStream::F32LE, kChannels, kFequency, callback);
 
   LOG("[%llu] Another AudioUnit is created!\n", id);
   gTaskDone = true;
@@ -175,7 +175,7 @@ void* watchdog(void* aSubject)
 
 int main()
 {
-  AudioStream as(AudioStream::Format::F32LE, kFequency, kChannels, callback);
+  AudioStream as(AudioStream::F32LE, kChannels, kFequency, callback);
 
   // Install signal handler.
   signal(CALL_THREAD_KILLER, killer);
