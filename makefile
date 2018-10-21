@@ -9,6 +9,7 @@ SOURCES=AudioDeviceListener.cpp\
 OBJECTS=$(SOURCES:.cpp=.o)
 
 TESTS=test_audio.cpp\
+      test_cfstring.cpp\
       test_deadlock.cpp\
       test_listener.cpp\
       test_utils.cpp
