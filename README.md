@@ -8,6 +8,9 @@ Clone this repo and run ```$ make all```.
 You can use ```$ make clean```
 
 ## TODO
+- Fix style!
+- Refactor ```AudioStream```
+- Verify the deadlock of creating audio stream when default device is changed
 - Implement a state callback to notify _started_, _stopped_, or _drained_
   - Maybe we should turn ```AudioStream``` into _FSM_ style
 - Enable *input* for ```AudioStream```
